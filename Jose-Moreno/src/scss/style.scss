@@ -15,6 +15,14 @@ body {
   @include transition(padding .15s);
 }
 
+
+.sidebar{
+  background-color:#633530;
+}
+
+
+
+
 .header > .container-fluid,
 .sidebar-header {
   min-height: calc(4rem + 1px); // stylelint-disable-line function-disallowed-list
@@ -28,6 +36,7 @@ body {
   .nav-underline-border {
     --cui-nav-underline-border-link-padding-x: 1rem;
     --cui-nav-underline-border-gap: 0;
+    
   }
 
   .nav-link {
@@ -48,6 +57,8 @@ body {
   }
 }
 
+
+
 .header > .container-fluid + .container-fluid {
   min-height: 3rem;
 }
@@ -57,6 +68,22 @@ body {
 }
 
 @include color-mode(dark) {
+  .sidebar {
+    background-color: var(--cui-dark-bg); //pone el menu lateral en negro en el modo oscuro
+  }
+
+  .sidebar .nav-link:hover {
+    background-color: var(--cui-body-bg);  //crea un hover para el menu lateral en el modo oscuro
+    color: white; 
+  }
+
+  .sidebar .nav-link.active {
+    background-color: var(--cui-body-bg); //cambia a modo oscuro
+    color: white; 
+  }
+  
+  
+
   body {
     background-color: var(--cui-dark-bg-subtle);
   }
@@ -65,3 +92,16 @@ body {
     --cui-footer-bg: var(--cui-body-bg);
   }
 }
+
+
+.sidebar .nav-link:hover {
+  background-color: #ab5e56;  //crea un hover para el menu lateral
+  color: black; 
+}
+
+
+.sidebar .nav-link.active {
+  background-color: #b08e6b; //cuando se presiona el color cambia
+  color: black; 
+}
+
