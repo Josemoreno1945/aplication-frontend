@@ -8,6 +8,7 @@ import {
   cilDescription,
   cilDrop,
   cilExternalLink,
+  cilGroup,
   cilHouse,
   cilNotes,
   cilPencil,
@@ -40,9 +41,9 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Inventory',
+    name: 'Users',
     to: '/theme/typography',
-    icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
   },
   {
     component: CNavTitle,

@@ -108,7 +108,8 @@ const Colors = () => {
   
   return (
     <>
-      <CCard className="mb-4">
+    <div className='conteiner'>  {/* Un div para contener el cuadro del boton y la lista*/}
+      <CCard className="c_button"> {/*contenedor del boton*/}
         <CCardHeader>
           Departments
         </CCardHeader>
@@ -188,7 +189,7 @@ const Colors = () => {
     {/*creo otro Ccard que contendra una tabla */}
     {/*esta tabla almacena los departamentos guardados*/}
 
-      <CCard className="mb-4">
+      <CCard className="c_list"> {/*contenedor de la lista*/}
         <CCardHeader>Management Departments</CCardHeader> 
         <CCardBody>
           <CTable striped hover>       {/*tabla con los departamentos*/}
@@ -219,6 +220,7 @@ const Colors = () => {
           </CTable>
         </CCardBody>
       </CCard>
+      </div>
     </>
   )
 }
