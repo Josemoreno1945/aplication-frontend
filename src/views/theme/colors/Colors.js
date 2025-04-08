@@ -5,7 +5,7 @@ import { CRow, CCol, CCard, CCardHeader, CCardBody,CButton,CModal,CModalBody,CMo
 CTable,CTableHead,CTableRow,CTableHeaderCell,CTableBody,CTableDataCell} from '@coreui/react'
 import { rgbToHex } from '@coreui/utils'
 import { DocsLink } from 'src/components'
-import 'src/scss/colors.scss'
+import 'src/scss/departments.scss'
 import CIcon from '@coreui/icons-react'
 import { cilListNumbered, cilPlus } from '@coreui/icons'
 
