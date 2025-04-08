@@ -3,6 +3,9 @@ import React from 'react'
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
+//----------------------------------------------------------------------------
+const Users= React.lazy(() => import('./views/management/Users/users'))
+const Departments= React.lazy(() => import('./views/management/Departments/departments'))
 
 // Base
 const Accordion = React.lazy(() => import('./views/base/accordion/Accordion'))
@@ -97,6 +100,9 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', element: Modals },
   { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
   { path: '/widgets', name: 'Widgets', element: Widgets },
+  //------------------------------------------------------------------------------
+  { path: '/management/Users', name: 'Management', element: Users, exact: true },
+  { path: '/management/Departments', name: 'Departments', element: Departments , exact: true },
 ]
 
 export default routes
