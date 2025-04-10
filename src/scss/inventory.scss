@@ -1,0 +1,29 @@
+.container{
+    display: flex;
+    
+}
+
+.buttom-add{
+    background-color: #74bf64;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 15px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 20px; 
+    transition: 0.3s;
+
+    &:hover {
+        background-color: #2f5c26;
+        color: white;
+        transform: scale(1.10);
+    }
+}
+
+.buttom-box{
+    position: fixed;
+    top: 110px;
+    left: 30px;
+}

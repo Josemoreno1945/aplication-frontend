@@ -8,55 +8,16 @@ import { DocsLink } from 'src/components'
 import 'src/scss/departments.scss'
 import CIcon from '@coreui/icons-react'
 import { cilListNumbered, cilPlus,cilX,cilPencil,cibDropbox} from '@coreui/icons'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 //---------------------------------------------------------------------------------------------------
-const ThemeView = () => {
-  const [color, setColor] = useState('rgb(255, 255, 255)')
-  const ref = createRef()
-
-  useEffect(() => {
-    const el = ref.current.parentNode.firstChild
-    const varColor = window.getComputedStyle(el).getPropertyValue('background-color')
-    setColor(varColor)
-  }, [ref])
-
-  return (
-    <table className="table w-100" ref={ref}>
-      <tbody>
-        <tr>
-          <td className="text-body-secondary">HEX:</td>
-          <td className="font-weight-bold">{rgbToHex(color)}</td>
-        </tr>
-        <tr>
-          <td className="text-body-secondary">RGB:</td>
-          <td className="font-weight-bold">{color}</td>
-        </tr>
-      </tbody>
-    </table>
-  )
-}
-
-const ThemeColor = ({ className, children }) => {
-  const classes = classNames(className, 'theme-color w-75 rounded mb-3')
-  return (
-    <CCol xs={12} sm={6} md={4} xl={2} className="mb-4">
-      <div className={classes} style={{ paddingTop: '75%' }}></div>
-      {children}
-      <ThemeView />
-    </CCol>
-  )
-}
-
-ThemeColor.propTypes = {
-  children: PropTypes.node,
-  className: PropTypes.string,
-}
-
 
 
 //-----------------------------------------------------------------------------------------------------
 
 const Departments = () => {
+
+  const Navigate = useNavigate(); //esto es para entrar en paginas creo 
 
   //estado para editar 
   const [isEditing,setIsEditing] = useState(false) //inicia en falso ....esto son como banderas xd , programar god
@@ -225,6 +186,7 @@ const Departments = () => {
       <CCard className="c_list"> {/*contenedor de la lista*/}
         <CCardHeader>Management Departments</CCardHeader> 
         <CCardBody>
+          <div  className="table-responsive">
           <CTable striped hover>      {/*tabla con los departamentos*/}
             <CTableHead>
               <CTableRow>           {/*primera fila , en la cabezera , contiene los tipos de datos*/}
@@ -250,7 +212,9 @@ const Departments = () => {
                   <CTableDataCell>
                     <CButton
                     className='button-inventory'
-                    onClick={() => console.log('Inventory clicked')}
+
+                    onClick={() => Navigate(`/inventory/${index}`)}  
+
                     > <CIcon icon={cibDropbox} /> </CButton>
                   </CTableDataCell>
                   <CTableDataCell>
@@ -269,6 +233,7 @@ const Departments = () => {
               ))}
             </CTableBody>
           </CTable>
+          </div>
         </CCardBody>
       </CCard>
       </div>
