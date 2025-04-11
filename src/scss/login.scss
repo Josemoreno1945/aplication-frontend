@@ -1,0 +1,52 @@
+.button_olvido{
+    background-color: #ffffff;
+    color: #b66c47;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    position: relative;
+    left:38%;
+}
+
+.button_registro{
+    background-color: #756f6c;
+    color: white;
+    border: solid 0.5px #756f6c;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 15px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: 0.3s;
+
+    &:hover{
+        background-color: #756f6c;
+        color: white;
+        transform: scale(1.10);
+    }
+}
+
+.button_login{
+    background-color: #756f6c;
+    color: white;
+    border: solid 0.5px #756f6c;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 15px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: 0.3s;
+
+    &:hover{
+        background-color: #756f6c;
+        color: white;
+        transform: scale(1.10);
+    }
+}

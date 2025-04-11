@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   CButton,
@@ -11,32 +11,53 @@ import {
   CFormInput,
   CInputGroup,
   CInputGroupText,
+  CModal,
+  CModalHeader,
   CRow,
+  CModalBody,
+  CModalFooter
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
+import fondo1 from '../../../assets/images/fondo1.jpg'
+import "src/scss/login.scss"
+
+
 
 const Login = () => {
+
+  const [forgotvisible,Setforgotvisible]=useState(false)
+
   return (
-    <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
+<>
+
+    <div style={{
+      backgroundColor: '#7d4b45',
+      backgroundImage: `url(${fondo1})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'}} className="min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
         <CRow className="justify-content-center">
           <CCol md={8}>
             <CCardGroup>
-              <CCard className="p-4">
+              <CCard style={{backgroundColor: 'white'}} className="p-4">
                 <CCardBody>
                   <CForm>
                     <h1>Login</h1>
                     <p className="text-body-secondary">Sign In to your account</p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
-                        <CIcon icon={cilUser} />
+                        <CIcon icon={cilUser} style={{
+                          color: '#b66c47'
+                        }} />
                       </CInputGroupText>
-                      <CFormInput placeholder="Username" autoComplete="username" />
+                      <CFormInput type="email" placeholder="Email" autoComplete="email" />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
-                        <CIcon icon={cilLockLocked} />
+                        <CIcon icon={cilLockLocked} style={{
+                          color: '#b66c47'
+                        }} />
                       </CInputGroupText>
                       <CFormInput
                         type="password"
@@ -46,33 +67,48 @@ const Login = () => {
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>
-                        <CButton color="primary" className="px-4">
+                        <CButton className="button_login">
                           Login
                         </CButton>
                       </CCol>
                       <CCol xs={6} className="text-right">
-                        <CButton color="link" className="px-0">
+                        <CButton className="button_olvido" onClick={() => Setforgotvisible(true)}>
                           Forgot password?
                         </CButton>
                       </CCol>
+                       <CModal visible={forgotvisible} onClose={()=>Setforgotvisible(false)}>
+                          <CModalHeader>Forgot password</CModalHeader>
+                          <CModalBody>
+                            <CForm>
+                              <p>Please enter your email and we will send you a code</p>
+                              <CInputGroup className="mb-3">
+                      <CInputGroupText>
+                        <CIcon icon={cilUser} style={{
+                          color: '#b66c47'
+                        }} />
+                      </CInputGroupText>
+                      <CFormInput type="email" placeholder="Email" autoComplete="email" />
+                        </CInputGroup>
+                            </CForm>
+                            </CModalBody>
+                            <CModalFooter>
+                                <CButton className="button_login">
+                                Accept
+                                </CButton>
+                            </CModalFooter>
+                              </CModal>
+                      <div className='text-center mt-0'>
+                        <p className='mb-0'>Create an account</p>
+                        <CCol className='text-center mt-3'>
+                          <Link to="/register">
+                        <CButton className="button_registro" >
+                          Register now!
+                        </CButton>
+                        </Link>
+                      </CCol>
+                      </div>
                     </CRow>
                   </CForm>
-                </CCardBody>
-              </CCard>
-              <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
-                <CCardBody className="text-center">
-                  <div>
-                    <h2>Sign up</h2>
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua.
-                    </p>
-                    <Link to="/register">
-                      <CButton color="primary" className="mt-3" active tabIndex={-1}>
-                        Register Now!
-                      </CButton>
-                    </Link>
-                  </div>
                 </CCardBody>
               </CCard>
             </CCardGroup>
@@ -80,7 +116,9 @@ const Login = () => {
         </CRow>
       </CContainer>
     </div>
+    </>
   )
 }
+
 
 export default Login
