@@ -1,0 +1,88 @@
+
+.button-add {
+    background-color: #74bf64;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 15px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 20px; 
+    transition: 0.3s;
+
+    &:hover {
+        background-color: #2f5c26;
+        color: white;
+        transform: scale(1.10);
+    }
+}
+
+.button-close {
+    background-color: #b08e6b;
+    color: white;
+    border:solid 0.5px black;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 15px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 20px; 
+    transition: 0.3s;
+    &:hover {
+        background-color:#68110a;
+        color: white;
+        transform: scale(1.10);
+    }
+}
+
+.button-save {
+    background-color: #b08e6b;
+    color: white;
+    border:solid 0.5px black;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 15px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 20px; 
+    transition: 0.3s;
+
+    &:hover {
+        background-color: #005f73;
+        color: white;
+        transform: scale(1.10);
+    }
+}
+
+
+
+.Modal-footer{
+    background-color: #89443d;
+    display: flex;
+    justify-content: center;
+}
+
+.Modal-header{
+    background-color: #89443d;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    color: white;
+}
+
+.c_button{
+    
+    margin: 0px  0px 0px;
+}
+
+.c_list{
+    width: 85%;
+}
+
+.conteiner{
+    display: flex;
+    gap: 10px;
+
+}
+

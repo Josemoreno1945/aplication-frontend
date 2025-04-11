@@ -4,9 +4,13 @@ import { useSelector } from 'react-redux'
 
 import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
+//-------------------------------------------------------------
 
+import Inventory from './components/Inventory'
+//-------------------------------------------------------------
 // We use those styles to show code examples, you should remove them in your application.
 import './scss/examples.scss'
+import { omitByKeys } from '@coreui/utils'
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
@@ -45,6 +49,9 @@ const App = () => {
         }
       >
         <Routes>
+          
+        
+          <Route path="/inventory/:departmentId" element={<Inventory />} /> {/*ruta a inventario agg , y agarra desde el id del dpto , ne puede servir despues en backend*/}
           <Route exact path="/login" name="Login Page" element={<Login />} />
           <Route exact path="/register" name="Register Page" element={<Register />} />
           <Route exact path="/404" name="Page 404" element={<Page404 />} />

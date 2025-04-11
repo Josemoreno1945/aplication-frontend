@@ -7,55 +7,23 @@ import { rgbToHex } from '@coreui/utils'
 import { DocsLink } from 'src/components'
 import 'src/scss/departments.scss'
 import CIcon from '@coreui/icons-react'
-import { cilListNumbered, cilPlus } from '@coreui/icons'
+import { cilListNumbered, cilPlus,cilX,cilPencil,cibDropbox} from '@coreui/icons'
+import { Navigate, useNavigate } from 'react-router-dom'
 
-const ThemeView = () => {
-  const [color, setColor] = useState('rgb(255, 255, 255)')
-  const ref = createRef()
-
-  useEffect(() => {
-    const el = ref.current.parentNode.firstChild
-    const varColor = window.getComputedStyle(el).getPropertyValue('background-color')
-    setColor(varColor)
-  }, [ref])
-
-  return (
-    <table className="table w-100" ref={ref}>
-      <tbody>
-        <tr>
-          <td className="text-body-secondary">HEX:</td>
-          <td className="font-weight-bold">{rgbToHex(color)}</td>
-        </tr>
-        <tr>
-          <td className="text-body-secondary">RGB:</td>
-          <td className="font-weight-bold">{color}</td>
-        </tr>
-      </tbody>
-    </table>
-  )
-}
-
-const ThemeColor = ({ className, children }) => {
-  const classes = classNames(className, 'theme-color w-75 rounded mb-3')
-  return (
-    <CCol xs={12} sm={6} md={4} xl={2} className="mb-4">
-      <div className={classes} style={{ paddingTop: '75%' }}></div>
-      {children}
-      <ThemeView />
-    </CCol>
-  )
-}
-
-ThemeColor.propTypes = {
-  children: PropTypes.node,
-  className: PropTypes.string,
-}
+//---------------------------------------------------------------------------------------------------
 
 
+//-----------------------------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------
+const Departments = () => {
 
-const Colors = () => {
+  const Navigate = useNavigate(); //esto es para entrar en paginas creo 
+
+  //estado para editar 
+  const [isEditing,setIsEditing] = useState(false) //inicia en falso ....esto son como banderas xd , programar god
+
+  //variable que guarda el id del departamento a editar
+  const [departmentId, setDepartmentId] = useState(null)  //en null pq no hay nada , solo se llena cuando se edita 
 
   //estado para guardar deptm
   //mejor dicho , es un arreglo que almacena los departamentos
@@ -78,6 +46,25 @@ const Colors = () => {
     setFormData({ ...formData, [name]: value })
   }
   
+
+    //funcion para eliminar un registro de la tabla de departamentos
+  const handleDelete = (index) => {
+    const updatedDepartments = departments.filter((_, i) => i !== index) //busca el dpt q eliminamos
+    setDepartments(updatedDepartments)  //actualiza el arreglo de dpts
+  }
+
+  //ahora una funcion para editar un registro 
+
+  const Editregister = (index) => {
+    setFormData(departments[index]) //accedo al departamento elegido 
+    setIsEditing(true) //cambio el estado a true para editar
+    setDepartmentId(index) //guarda el id del dpt
+    setModalVisible(true) //muestra el modal o mejor dicho el formulario
+  }
+
+
+
+
   // al presionar el boton save , este envia o guarda los datos -----------------------------------------------
   const handleSubmit = () => {
     if (!formData.name || !formData.address || !formData.phone || !formData.email || !formData.operational_status) {
@@ -103,16 +90,23 @@ const Colors = () => {
           operational_status: '',
         })
         setModalVisible(false) 
+
+    //-------------------------------------------------------------------
+    //ahora in if , solo es cuando se esta editando , esto lo sabemos con banderas . cuando isediting sea true entra
+    if (isEditing=== true) {
+      const updatedDepartments = [...departments] //mete los departamentos a un nuevo arreglo 
+      updatedDepartments[departmentId] = formData  //en update posicion 1 va guadar el nuevo registro , osea formdata guarda cada nuevo registro
+      setDepartments(updatedDepartments) //actualiza el arreglo de departamentos
+      setIsEditing(false) //cambia la bandera a false 
+      setDepartmentId(null) //limpia la variable de id 
+    }
   }
   
   
   return (
     <>
     <div className='conteiner'>  {/* Un div para contener el cuadro del boton y la lista*/}
-      <CCard className="c_button"> {/*contenedor del boton*/}
-        <CCardHeader>
-          Departments
-        </CCardHeader>
+      <div className="c_button"> {/*contenedor del boton*/}
         <CCardBody>
           <CButton className="button-add" onClick={() => setModalVisible(true)}>Add <CIcon icon={cilPlus} /> </CButton> {/*cada q se da un click se abre el modal*/}
           <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>  {/*cada que se da un click se cierra el modal*/} 
@@ -184,7 +178,7 @@ const Colors = () => {
             </CModalFooter>
           </CModal>
         </CCardBody>
-      </CCard>
+      </div>
 
     {/*creo otro Ccard que contendra una tabla */}
     {/*esta tabla almacena los departamentos guardados*/}
@@ -192,7 +186,8 @@ const Colors = () => {
       <CCard className="c_list"> {/*contenedor de la lista*/}
         <CCardHeader>Management Departments</CCardHeader> 
         <CCardBody>
-          <CTable striped hover>       {/*tabla con los departamentos*/}
+          <div  className="table-responsive">
+          <CTable striped hover>      {/*tabla con los departamentos*/}
             <CTableHead>
               <CTableRow>           {/*primera fila , en la cabezera , contiene los tipos de datos*/}
               <CTableHeaderCell><CIcon icon={cilListNumbered}/> </CTableHeaderCell>
@@ -214,10 +209,31 @@ const Colors = () => {
                   <CTableDataCell>{department.phone}</CTableDataCell>
                   <CTableDataCell>{department.email}</CTableDataCell>
                   <CTableDataCell>{department.operational_status}</CTableDataCell>
+                  <CTableDataCell>
+                    <CButton
+                    className='button-inventory'
+
+                    onClick={() => Navigate(`/inventory/${index}`)}  
+
+                    > <CIcon icon={cibDropbox} /> </CButton>
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    <CButton
+                    className='button-edit'
+                    onClick={() => Editregister(index)} 
+                    > <CIcon icon={cilPencil} /> </CButton>
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    <CButton
+                    className='button-delete'
+                    onClick={() => handleDelete(index)} //cuando se da click en el boton de eliminar , llama a la funcion handleDelete
+                    >  <CIcon icon={cilX} /> </CButton>
+                  </CTableDataCell>
                 </CTableRow>
               ))}
             </CTableBody>
           </CTable>
+          </div>
         </CCardBody>
       </CCard>
       </div>
@@ -225,4 +241,4 @@ const Colors = () => {
   )
 }
 
-export default Colors
+export default Departments
