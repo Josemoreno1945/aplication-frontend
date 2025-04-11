@@ -1,7 +1,7 @@
 
 .button-add {
-    background-color: #74bf64;
-    color: black;
+    background-color: #756f6c;
+    color: white;
     border: none;
     padding: 10px 20px;
     text-align: center;
@@ -12,16 +12,16 @@
     transition: 0.3s;
 
     &:hover {
-        background-color: #2f5c26;
+        background-color: #686868;
         color: white;
         transform: scale(1.10);
     }
 }
 
 .button-close {
-    background-color: #b08e6b;
+    background-color: #756f6c;
     color: white;
-    border:solid 0.5px black;
+    
     padding: 10px 20px;
     text-align: center;
     font-size: 15px;
@@ -30,16 +30,16 @@
     border-radius: 20px; 
     transition: 0.3s;
     &:hover {
-        background-color:#68110a;
+        background-color:#756f6c;
         color: white;
         transform: scale(1.10);
     }
 }
 
 .button-save {
-    background-color: #b08e6b;
+    background-color: #756f6c;
     color: white;
-    border:solid 0.5px black;
+    
     padding: 10px 20px;
     text-align: center;
     font-size: 15px;
@@ -49,7 +49,7 @@
     transition: 0.3s;
 
     &:hover {
-        background-color: #005f73;
+        background-color: #756f6c;
         color: white;
         transform: scale(1.10);
     }
@@ -58,13 +58,13 @@
 
 
 .Modal-footer{
-    background-color: #89443d;
+    background-color: #8f5a40;
     display: flex;
     justify-content: center;
 }
 
 .Modal-header{
-    background-color: #89443d;
+    background-color:#8f5a40;
     display: flex; 
     justify-content: center; 
     align-items: center;
