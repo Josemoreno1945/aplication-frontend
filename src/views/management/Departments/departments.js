@@ -27,7 +27,7 @@ const Departments = () => {
 
   //estado para guardar deptm
   //mejor dicho , es un arreglo que almacena los departamentos
-  const [departments, setDepartments] = useState([])  
+  const [departments, setDepartments] = useState([]) 
 
   //estado para la visibilidad del modal xd
   const [modalVisible, setModalVisible] = useState(false) 
@@ -38,6 +38,7 @@ const Departments = () => {
     phone: '',
     email: '',
     operational_status: '',
+      
   })
   
   //esta asociado al lo anterior , es lo que guarda los datos del formulario 
