@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   CButton,
@@ -11,37 +11,53 @@ import {
   CFormInput,
   CInputGroup,
   CInputGroupText,
+  CModal,
+  CModalHeader,
   CRow,
+  CModalBody,
+  CModalFooter
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
-import flores from '../../../assets/images/flores.png'
+import fondo1 from '../../../assets/images/fondo1.jpg'
+import "src/scss/login.scss"
+
+
 
 const Login = () => {
+
+  const [forgotvisible,Setforgotvisible]=useState(false)
+
   return (
+<>
+
     <div style={{
       backgroundColor: '#7d4b45',
-      backgroundImage: `url(${flores})`,
+      backgroundImage: `url(${fondo1})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center'}} className="min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
         <CRow className="justify-content-center">
           <CCol md={8}>
             <CCardGroup>
-              <CCard style={{backgroundColor: 'light'}} className="p-4">
+              <CCard style={{backgroundColor: 'white'}} className="p-4">
                 <CCardBody>
                   <CForm>
                     <h1>Login</h1>
                     <p className="text-body-secondary">Sign In to your account</p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
-                        <CIcon icon={cilUser} />
+                        <CIcon icon={cilUser} style={{
+                          color: '#b66c47'
+                        }} />
                       </CInputGroupText>
                       <CFormInput type="email" placeholder="Email" autoComplete="email" />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
-                        <CIcon icon={cilLockLocked} />
+                        <CIcon icon={cilLockLocked} style={{
+                          color: '#b66c47'
+                        }} />
                       </CInputGroupText>
                       <CFormInput
                         type="password"
@@ -51,21 +67,44 @@ const Login = () => {
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>
-                        <CButton color="black" className="px-4">
+                        <CButton className="button_login">
                           Login
                         </CButton>
                       </CCol>
                       <CCol xs={6} className="text-right">
-                        <CButton color="link" className="px-0">
+                        <CButton className="button_olvido" onClick={() => Setforgotvisible(true)}>
                           Forgot password?
                         </CButton>
                       </CCol>
+                       <CModal visible={forgotvisible} onClose={()=>Setforgotvisible(false)}>
+                          <CModalHeader>Forgot password</CModalHeader>
+                          <CModalBody>
+                            <CForm>
+                              <p>Please enter your email and we will send you a code</p>
+                              <CInputGroup className="mb-3">
+                      <CInputGroupText>
+                        <CIcon icon={cilUser} style={{
+                          color: '#b66c47'
+                        }} />
+                      </CInputGroupText>
+                      <CFormInput type="email" placeholder="Email" autoComplete="email" />
+                        </CInputGroup>
+                            </CForm>
+                            </CModalBody>
+                            <CModalFooter>
+                                <CButton className="button_login">
+                                Accept
+                                </CButton>
+                            </CModalFooter>
+                              </CModal>
                       <div className='text-center mt-0'>
                         <p className='mb-0'>Create an account</p>
                         <CCol className='text-center mt-3'>
-                        <CButton color='black' className='px-0'>
+                          <Link to="/register">
+                        <CButton className="button_registro" >
                           Register now!
                         </CButton>
+                        </Link>
                       </CCol>
                       </div>
                     </CRow>
@@ -77,6 +116,7 @@ const Login = () => {
         </CRow>
       </CContainer>
     </div>
+    </>
   )
 }
 
