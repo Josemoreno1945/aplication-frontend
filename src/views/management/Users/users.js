@@ -1,13 +1,15 @@
 import React, {useState} from 'react'
 import { CRow, CCol, CCard, CCardHeader, CCardBody,CButton,CModal,CModalBody,CModalHeader,CModalFooter,CForm, CFormInput, CFormLabel, CFormSelect,
     CTable,CTableHead,CTableRow,CTableHeaderCell,CTableBody,CTableDataCell} from '@coreui/react'
-import { DocsLink } from 'src/components'
-
+import CIcon from '@coreui/icons-react'
+import { cilX} from '@coreui/icons'
 
 
 const Users = () => {
 
+
     const [users, setusers] = useState([
+
         {                
                         id: 1,
                         first_name: "Jose",
@@ -42,6 +44,16 @@ const Users = () => {
                         department: "Subdirection",
                     },
     ])
+
+
+
+    const[updateuser, setupdateuser] = useState([null])
+
+    const handleDelete = (index) => {
+        const updateduser = users.filter((_, i) => i !== index) //busca el dpt q eliminamos
+        setusers(updateduser)  //actualiza el arreglo de dpts
+      }
+
     return (
         <>
         <CCard className="mb-4">
@@ -65,6 +77,7 @@ const Users = () => {
                     <CTableHeaderCell>Phone</CTableHeaderCell>
                     <CTableHeaderCell>Address</CTableHeaderCell>
                     <CTableHeaderCell>Department</CTableHeaderCell>
+                    <CTableHeaderCell>.</CTableHeaderCell>
                 </CTableRow>
             </CTableHead>
             <CTableBody>
@@ -80,6 +93,11 @@ const Users = () => {
                         <CTableDataCell>{user.phone}</CTableDataCell>
                         <CTableDataCell>{user.address}</CTableDataCell>
                         <CTableDataCell>{user.department}</CTableDataCell>
+                        <CTableDataCell>
+                            <CButton onClick={() => handleDelete(index)}>
+                                <CIcon icon={cilX} />
+                            </CButton>
+                        </CTableDataCell>
                     </CTableRow>
                 ))}
             </CTableBody>
