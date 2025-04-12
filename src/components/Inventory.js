@@ -13,6 +13,8 @@ import { cilListNumbered, cilPlus,cilX,cilPencil,cibDropbox} from '@coreui/icons
 
 const Inventory = () => {
 
+
+
     const [buttomcontinue,setButtomContinue]=useState(false); 
 
     const [openmodal,setOpenModal]=useState(false); //abri model y cerrar
@@ -33,27 +35,6 @@ const Inventory = () => {
     }
 
     const [inventory, setInventory] = useState([
-        {
-                id: '',
-                type: '',
-                classification: '',
-                description: '',
-                color: '',
-                brand: '',
-                model: '',
-                serial: '',
-                height: '',
-                width: '',
-                depth: '',
-                plate:'',
-                bodywork:'',
-                engine: '',
-                year_of_the_vehicule: '',
-                acquisition_value: '',
-                use_status: '',
-                conservation_status: '',
-                observation: '',
-        },
             {
                 
                 id: 1,
@@ -477,6 +458,53 @@ const Inventory = () => {
             },
     ]); 
 
+    const handleDelete = (index) => {
+        const updatedInventory = inventory.filter((_, i) => i !== index) //busca el asset a  eliminar
+        setInventory(updatedInventory)  //actualiza el arreglo de assets
+    }
+
+    const EditItem = (index) => {
+        setFormData(inventory[index]); // Carga los datos del elemento seleccionado en el formulario
+        setIsEditing(true); // Cambia el estado a true para indicar que se está editando
+        setItemId(index); // Guarda el índice del elemento que se está editando
+        setOpenModal(true); // Abre el modal para editar
+    };
+
+    const handleSubmit = () => {
+        if (isEditing === true) {
+          const updatedInventory = [...inventory]; // Crea una copia del inventario
+          updatedInventory[itemId] = formData; // Actualiza el elemento en la posición correspondiente
+          setInventory(updatedInventory); // Actualiza el estado del inventario
+          setIsEditing(false); // Cambia la bandera de edición a false
+          setItemId(null); // Limpia el índice del elemento editado
+        } else {
+          // Si no se está editando, agrega un nuevo elemento
+          setInventory([...inventory, formData]); // Agrega el nuevo elemento al inventario
+        }
+        // Limpia el formulario y cierra el modal
+  setFormData({
+    id: "",
+    type: "",
+    classification: "",
+    description: "",
+    color: "",
+    brand: "",
+    model: "",
+    serial: "",
+    height: "",
+    width: "",
+    depth: "",
+    plate: "",
+    bodywork: "",
+    engine: "",
+    year_of_the_vehicule: "",
+    acquisition_value: "",
+    use_status: "",
+    conservation_status: "",
+    observation: "",
+    });
+    setOpenModal(false);
+};
 
     return (
         <>
@@ -554,6 +582,7 @@ const Inventory = () => {
                                 <CTableHeaderCell>Use status</CTableHeaderCell>
                                 <CTableHeaderCell>Conservation status</CTableHeaderCell>
                                 <CTableHeaderCell>Observation</CTableHeaderCell>
+                                <CTableHeaderCell></CTableHeaderCell>
                             </CTableRow>
                         </CTableHead>
                         <CTableBody>
@@ -578,6 +607,16 @@ const Inventory = () => {
                                     <CTableDataCell>{item.use_status}</CTableDataCell>
                                     <CTableDataCell>{item.conservation_status}</CTableDataCell>
                                     <CTableDataCell>{item.observation}</CTableDataCell>
+                                    <CTableDataCell>
+                                        <CButton onClick={() => handleDelete(index)}>
+                                            <CIcon icon={cilX} />
+                                        </CButton>
+                                    </CTableDataCell>
+                                    <CTableDataCell>
+                                        <CButton
+                                        onClick={() => Editregister(index)} 
+                                        > <CIcon icon={cilPencil} /> </CButton>
+                                    </CTableDataCell>
                                 </CTableRow>
                             ))}
                         </CTableBody>

@@ -27,7 +27,29 @@ const Departments = () => {
 
   //estado para guardar deptm
   //mejor dicho , es un arreglo que almacena los departamentos
-  const [departments, setDepartments] = useState([]) 
+  const [departments, setDepartments] = useState([
+          {                
+            name: 'Human Resources',                      
+            address: 'unes, Av. 19 de Abril, San Cristóbal, piso 5',
+            phone: '+58 212-7654321',
+            email: 'hr.office@organization.com',
+            operational_status: 'active',
+        },
+        {                
+          name: 'Technology Office',                      
+          address: 'unes, Av. 19 de Abril, San Cristóbal, piso 5',
+          phone: '+58 212-9876543',
+          email: 'technology.office@organization.com',
+          operational_status: 'active',
+      },
+      {                
+        name: 'National Assets Office',                      
+        address: 'unes, Av. 19 de Abril, San Cristóbal, piso 5',
+        phone: '+58 212-1234567',
+        email: 'assets.office@organization.com',
+        operational_status: 'active',
+    },
+  ]) 
 
   //estado para la visibilidad del modal xd
   const [modalVisible, setModalVisible] = useState(false) 
@@ -109,7 +131,19 @@ const Departments = () => {
     <div className='conteiner'>  {/* Un div para contener el cuadro del boton y la lista*/}
       <div className="c_button"> {/*contenedor del boton*/}
         <CCardBody>
-          <CButton className="button-add" onClick={() => setModalVisible(true)}>Add <CIcon icon={cilPlus} /> </CButton> {/*cada q se da un click se abre el modal*/}
+          <CButton className="button-add" onClick={() => {
+          setFormData({
+            name: '',                  //aqui hacemos q al darle click al add , siempre el formulario este vacio 
+            address: '',
+            phone: '',
+            email: '',
+            operational_status: '',
+          });
+          setModalVisible(true); //modal lo hacemos visible 
+          setIsEditing(false);  //y verificamos q no se esta editando , q es solo add pues 
+          }}  
+          
+          >Add <CIcon icon={cilPlus} /> </CButton> {/*cada q se da un click se abre el modal*/}
           <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>  {/*cada que se da un click se cierra el modal*/} 
             <CModalHeader className='Modal-header'>Add New Department</CModalHeader>
             <CModalBody className='Modal-body'>
@@ -197,6 +231,9 @@ const Departments = () => {
               <CTableHeaderCell>Phone</CTableHeaderCell>
               <CTableHeaderCell>Email</CTableHeaderCell>
               <CTableHeaderCell>Status</CTableHeaderCell>
+              <CTableHeaderCell></CTableHeaderCell>
+              <CTableHeaderCell></CTableHeaderCell>
+              <CTableHeaderCell></CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>       {/*ahora en el body de la tabla mostramos los datos almacenados*/}
