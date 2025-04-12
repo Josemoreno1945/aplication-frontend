@@ -53,6 +53,54 @@ const Users = () => {
                         department: "Subdirection",
                         status: "Inactive",
                     },
+                    {
+                        id: 4,
+                        first_name: "Luisa",
+                        last_name: "Marquez",
+                        username: "luisamarq",
+                        rol: "Department Head",
+                        email: "marquezluisa2@gmail.com",
+                        phone: "887655456",
+                        address: "Av. Ferrero Tamayo",
+                        department: "Human Resources",
+                        status: "Active",
+                    },
+                    {
+                        id: 5,
+                        first_name: "Mariana",
+                        last_name: "Morales",
+                        username: "morales123",
+                        rol: "Department Head",
+                        email: "marianacm@gmail.com",
+                        phone: "098678543",
+                        address: "El Junco",
+                        department: "Legal Consulting",
+                        status: "Active",
+                    },
+                    {
+                        id: 6,
+                        first_name: "Omar",
+                        last_name: "Lopez",
+                        username: "omarrlopez",
+                        rol: "Department Head",
+                        email: "omar2lopez@gmail.com",
+                        phone: "111222333",
+                        address: "Pueblo Nuevo",
+                        department: "Technology",
+                        status: "Inactive",
+                    },
+                    {
+                        id: 7,
+                        first_name: "Pedro",
+                        last_name: "Martinez",
+                        username: "pedromarti",
+                        rol: "Department Head",
+                        email: "pmartinez@gmail.com",
+                        phone: "998764321",
+                        address: "La Concordia",
+                        department: "General Services",
+                        status: "Active",
+                    },
     ])
 
 
@@ -60,17 +108,28 @@ const Users = () => {
     
 
     const handleDelete = (index) => {
-        const updateduser = users.filter((_, i) => i !== index) //busca el dpt q eliminamos
-        setusers(updateduser)  //actualiza el arreglo de dpts
+        const updateduser = users.filter((_, i) => i !== index) //busca el user que eliminamos
+        setusers(updateduser)  //actualiza el arreglo de user
       }
 
   
 
       const Editregister = (index) => {
-        setupdateuser(users[index]) //accedo al departamento elegido 
+        setupdateuser(users[index]) //accedo al user elegido 
         setIsEditing(true) //cambio el estado a true para editar
-        setuserid(index) //guarda el id del dpt
+        setuserid(index) //guarda el id del user
         setModalVisible(true) //muestra el modal o mejor dicho el formulario
+      }
+
+      const handleSave = () => {
+        if (userid !== null) {
+          const updatedUsers = [...users]
+          updatedUsers[userid] = updateuser // actualiza el user en la posicion correspondiente
+          setusers(updatedUsers) // actualiza el estado con el nuevo arreglo
+          setModalVisible(false) // cierra el modal
+          setIsEditing(false) // cambia la bandera de edición
+          setuserid(null) // limpia el id del user
+        }
       }
 
     return (
@@ -154,7 +213,7 @@ const Users = () => {
                     />
                         </CModalBody>
                     <CModalFooter className="footer_edit">
-                         <CButton className="button_edit">
+                         <CButton className="button_edit" onClick={handleSave}>
                             Accept
                         </CButton>
                     </CModalFooter>
