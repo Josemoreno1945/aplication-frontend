@@ -7,7 +7,7 @@ import { rgbToHex } from '@coreui/utils'
 import { DocsLink } from 'src/components'
 import 'src/scss/departments.scss'
 import CIcon from '@coreui/icons-react'
-import { cilListNumbered, cilPlus,cilX,cilPencil,cibDropbox} from '@coreui/icons'
+import { cilListNumbered, cilPlus,cilX,cilPencil,cibDropbox,cilSearch} from '@coreui/icons'
 import { Navigate, useNavigate } from 'react-router-dom'
 
 //---------------------------------------------------------------------------------------------------
@@ -49,6 +49,7 @@ const Departments = () => {
         email: 'assets.office@organization.com',
         operational_status: 'active',
     },
+    
   ]) 
 
   //estado para la visibilidad del modal xd
@@ -126,8 +127,44 @@ const Departments = () => {
   }
   
   
+//--------------------------------------------------------------------------------------------
+
+  const [search, setSearch] = useState("");  //verctor donde guarda las busquedas 
+                                            //al buscar , lo que escribo se guarda aqui 
+
+  let  filteredDepartment=[]  //let para que pueda cambiar los valores , aqui inicializo un vector vacio
+
+  if (search===""){
+    filteredDepartment=departments  //si no hay nada en el buscador , o mejor dicho en el vector, muestra todos los dpt 
+  }else{
+    filteredDepartment=departments.filter((dpt)=>                //y si si lo hay , filtro , por categorias , o etiquetas 
+    dpt.name.toLowerCase().includes(search.toLowerCase())||
+    dpt.address.toLowerCase().includes(search.toLowerCase())||  //reviso si el nombre , esta incluido en el vector search , osea si dpt manolito es igual a dpt manolito pero en el vector search
+    dpt.phone.toLowerCase().includes(search.toLowerCase())||
+    dpt.email.toLowerCase().includes(search.toLowerCase())||
+    dpt.operational_status.toLowerCase().includes(search.toLowerCase())
+    );
+  }
+
+
+
+
   return (
     <>
+            {/*------------------------------------------------------------------------------------- */}
+            <div className="buscador">
+                <CForm className="d-flex">
+                    <CFormInput
+                    className="input-buttom-search"
+                    type="text"
+                    placeholder="Search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    ></CFormInput>
+                    <CButton className="search-buttom"><CIcon className="icon-search" icon={cilSearch} /></CButton>
+                </CForm>
+            </div>
+            {/*------------------------------------------------------------------------------------- */}
     <div className='conteiner'>  {/* Un div para contener el cuadro del boton y la lista*/}
       <div className="c_button"> {/*contenedor del boton*/}
         <CCardBody>
@@ -239,7 +276,7 @@ const Departments = () => {
             <CTableBody>       {/*ahora en el body de la tabla mostramos los datos almacenados*/}
               {/*map es una funcion que se usa para recorrer un arreglo , en este caso es el de departments*/}
               {/*el index , esta vaina es como un ciclo recorriendo un vector , department es el vector en cuestion y key es como un id , indentificador*/}
-              {departments.map((department, index) => (          
+              {filteredDepartment.map((department, index) => (          
                 <CTableRow key={index}>
                   <CTableDataCell>{index + 1}</CTableDataCell>
                   <CTableDataCell>{department.name}</CTableDataCell>
@@ -250,9 +287,7 @@ const Departments = () => {
                   <CTableDataCell>
                     <CButton
                     className='button-inventory'
-
                     onClick={() => Navigate(`/inventory/${index}`)}  
-
                     > <CIcon icon={cibDropbox} /> </CButton>
                   </CTableDataCell>
                   <CTableDataCell>
