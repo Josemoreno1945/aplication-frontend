@@ -25,24 +25,28 @@ const Departments = () => {
   //variable que guarda el id del departamento a editar
   const [departmentId, setDepartmentId] = useState(null)  //en null pq no hay nada , solo se llena cuando se edita 
 
-  //estado para guardar deptm
-  //mejor dicho , es un arreglo que almacena los departamentos
+
+
+  //arreglo que almacena los departamentos
   const [departments, setDepartments] = useState([
-          {                
+          { 
+            id:'666',
             name: 'Human Resources',                      
             address: 'unes, Av. 19 de Abril, San Cristóbal, piso 5',
             phone: '+58 212-7654321',
             email: 'hr.office@organization.com',
             operational_status: 'active',
         },
-        {                
+        {               
+          id:'123',
           name: 'Technology Office',                      
           address: 'unes, Av. 19 de Abril, San Cristóbal, piso 5',
           phone: '+58 212-9876543',
           email: 'technology.office@organization.com',
           operational_status: 'active',
       },
-      {                
+      { 
+        id:'321',
         name: 'National Assets Office',                      
         address: 'unes, Av. 19 de Abril, San Cristóbal, piso 5',
         phone: '+58 212-1234567',
@@ -52,7 +56,7 @@ const Departments = () => {
     
   ]) 
 
-  //estado para la visibilidad del modal xd
+  //estado para la visibilidad del modal de add xd
   const [modalVisible, setModalVisible] = useState(false) 
   //almacena los datos del formulario , setFromdata funcion q se usa para actualizar los valores de formdata
   const [formData, setFormData] = useState({  
@@ -70,11 +74,14 @@ const Departments = () => {
     setFormData({ ...formData, [name]: value })
   }
   
+  //-------------------------------------------------------------------------------------------
+  const [deleteDptid,setDeleteDptid]=useState("") //guarda el id del dpt a eliminar (se podra usar lo mismo de editar?????)
 
     //funcion para eliminar un registro de la tabla de departamentos
-  const handleDelete = (index) => {
-    const updatedDepartments = departments.filter((_, i) => i !== index) //busca el dpt q eliminamos
-    setDepartments(updatedDepartments)  //actualiza el arreglo de dpts
+  const handleDelete = (id) => {
+    const updatedDepartments = departments.filter((department)=>department.id!==id)  //comparamos el id seleccionado con los del vector
+    setDepartments(updatedDepartments)  
+    setMvisible(false)
   }
 
   //ahora una funcion para editar un registro 
@@ -146,6 +153,7 @@ const Departments = () => {
     );
   }
 
+  const [mvisible,setMvisible]=useState(false)
 
 
 
@@ -164,6 +172,31 @@ const Departments = () => {
                     <CButton className="search-buttom"><CIcon className="icon-search" icon={cilSearch} /></CButton>
                 </CForm>
             </div>
+
+
+ {/*------------------------------------------------------------------------------------- */}
+
+
+            <CModal visible={mvisible} onClose={() => setMvisible(false)}>
+            <CModalHeader>Delete department</CModalHeader>
+            <CFormLabel>Are you sure you want to delete?</CFormLabel>
+            <CModalBody>
+            <CButton
+              className='buttom-accept'
+              onClick={() =>setMvisible(false)}
+              >No</CButton>
+            <CButton
+              className='buttom-accept'
+              onClick={() => 
+                handleDelete(deleteDptid)}
+              >Yes</CButton>
+            </CModalBody>
+          </CModal>
+
+
+
+
+
             {/*------------------------------------------------------------------------------------- */}
     <div className='conteiner'>  {/* Un div para contener el cuadro del boton y la lista*/}
       <div className="c_button"> {/*contenedor del boton*/}
@@ -259,9 +292,10 @@ const Departments = () => {
         <CCardHeader>Management Departments</CCardHeader> 
         <CCardBody>
           <div  className="table-responsive">
-          <CTable striped hover>      {/*tabla con los departamentos*/}
+          <CTable striped hover>     
+            {/*tabla con los departamentos*/}
             <CTableHead>
-              <CTableRow>           {/*primera fila , en la cabezera , contiene los tipos de datos*/}
+              <CTableRow>  
               <CTableHeaderCell><CIcon icon={cilListNumbered}/> </CTableHeaderCell>
               <CTableHeaderCell>Name</CTableHeaderCell>
               <CTableHeaderCell>Address</CTableHeaderCell>
@@ -273,7 +307,8 @@ const Departments = () => {
               <CTableHeaderCell></CTableHeaderCell>
               </CTableRow>
             </CTableHead>
-            <CTableBody>       {/*ahora en el body de la tabla mostramos los datos almacenados*/}
+            <CTableBody>      
+              {/*ahora en el body de la tabla mostramos los datos almacenados*/}
               {/*map es una funcion que se usa para recorrer un arreglo , en este caso es el de departments*/}
               {/*el index , esta vaina es como un ciclo recorriendo un vector , department es el vector en cuestion y key es como un id , indentificador*/}
               {filteredDepartment.map((department, index) => (          
@@ -297,10 +332,14 @@ const Departments = () => {
                     > <CIcon icon={cilPencil} /> </CButton>
                   </CTableDataCell>
                   <CTableDataCell>
-                    <CButton
+                    <CButton 
                     className='button-delete'
-                    onClick={() => handleDelete(index)} //cuando se da click en el boton de eliminar , llama a la funcion handleDelete
-                    >  <CIcon icon={cilX} /> </CButton>
+                    onClick={() => 
+                    { 
+                      setDeleteDptid(department.id) //aqui guarda el id del dpt seleccionado (se usa department si s , pq abajo donde se recorre el vector esta asi)
+                      setMvisible(true)}
+                    }>
+                    <CIcon icon={cilX} /> </CButton>
                   </CTableDataCell>
                 </CTableRow>
               ))}
@@ -310,6 +349,9 @@ const Departments = () => {
         </CCardBody>
       </CCard>
       </div>
+
+
+
     </>
   )
 }
