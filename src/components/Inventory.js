@@ -162,17 +162,10 @@ const Inventory = () => {
     ]); 
 
     //aja , esta funcion ejecuta o realiza , el proceso de eliminar un item de inventory 
-    //esta funcion recibe index como parametro , vendra siendo practicamente
-    //la posicion del item en el arreglo 
-    //la de abajo me la dio la IA ()
 
-    /*
-    const handleDelete = (index) => {
-        const updatedInventory = inventory.filter((_, i) => i !== index) //busca el asset a  eliminar
-        setInventory(updatedInventory)  //actualiza el arreglo de assets
-    }
-*/
 
+const [deleteitemid,setDeleteitemid]=useState("") 
+const [mvisible,setMvisible]=useState(false)
 //----------------------------------------------------------------------------------------------------------------------
     //la misma vaina me la dio la ia , pero mas entendible , mas similar a lo que aprendi en c , con ciclos 
         //funcion que recibe index como parametro
@@ -181,15 +174,17 @@ const Inventory = () => {
         //verificamos que i sea diferente a index , osea yo elijo 
         //i=1 , index=1 , updateitem no va a tener el 1 , osea se lo salta 
         //y ahora updateitem se llena , pero sin tener el 1 , o index
-    function deleteitem(index){         
+    function deleteitem(deleteitemid){         
         const updateitemxd=[]          
         for(let i=0;i<inventory.length;i++){  
-            if(i!==index){                           
+            if(i!==deleteitemid){                           
                 updateitemxd.push(inventory[i])    
             }
         }
 
         setInventory(updateitemxd) //y ahora se actualiza inventario , que ya no tendria el item 
+        setMvisible(false)
+        
     }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------
@@ -213,6 +208,16 @@ const handleInputChange = (e) => {
 
 
     const handleSubmit = () => {
+        
+    if (!FormData.id 
+    ) {
+        alert('Please fill out all fields.')   
+        return
+    }
+
+
+    
+
 
         if (isEditing === true) {
           const updatedInventory = [...inventory]; // Crea una copia del inventario
@@ -250,11 +255,41 @@ const handleInputChange = (e) => {
                 level:"",
                 analyst:"",
                 });
+                
     setOpenModal(false);
+
+    
+
 };
 
     return (
         <>
+
+
+    <CModal visible={mvisible} onClose={() => setMvisible(false)}>
+            <CModalHeader className='Modal-header'>Delete item</CModalHeader>
+            <CFormLabel className='label-delete'>Are you sure you want to delete?</CFormLabel>
+            <CModalBody>
+                <div className='box-buttom-accept'>
+                    <CButton
+                    className='buttom-accept'
+                    onClick={() =>setMvisible(false)}
+                    >No</CButton>
+                    <CButton
+                    className='buttom-accept'
+                    onClick={() => 
+                        deleteitem(deleteitemid)}
+                    >Yes</CButton>
+                </div>
+            </CModalBody>
+        </CModal>
+
+
+
+
+
+
+
     <div className="container">
         <div className="buttom-box">                  
         <CButton className="buttom-add" onClick={()=>{
@@ -422,11 +457,11 @@ const handleInputChange = (e) => {
                     value={formData.engine}
                     onChange={handleInputChange}
                     ></CFormInput>
-                    <CFormLabel htmlFor="year">Year of the vehicule:</CFormLabel>
+                    <CFormLabel htmlFor="year_of_the_vehicule">Year of the vehicule:</CFormLabel>
                     <CFormInput
                     type="number"
-                    id="year"
-                    name="year"
+                    id="year_of_the_vehicule"
+                    name="year_of_the_vehicule"
                     placeholder="Year of the vehicule"
                     value={formData.year_of_the_vehicule}
                     onChange={handleInputChange}
@@ -595,7 +630,10 @@ const handleInputChange = (e) => {
                                         > <CIcon icon={cilPencil} /> </CButton>
                                     </CTableDataCell>
                                     <CTableDataCell>
-                                        <CButton onClick={() => deleteitem(index)}>
+                                        <CButton onClick={() =>{
+                                            setDeleteitemid(item.id)
+                                            setMvisible(true)
+                                        }}>
                                             <CIcon icon={cilX} />
                                         </CButton>
                                     </CTableDataCell>

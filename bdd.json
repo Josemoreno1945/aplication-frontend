@@ -1,0 +1,100 @@
+{
+  "departments": [
+    {
+      "id": "1",
+      "name": "National Assets Office",
+      "address": "unes, Av. 19 de Abril, San Cristóbal, piso 5",
+      "phone": "+58 212-1234567",
+      "email": "assets.office@organization.com",
+      "operational_status": "active"
+    },
+    {
+      "id": "2",
+      "name": "Human Resources Office",
+      "address": "unes, Av. 19 de Abril, San Cristóbal, piso 5",
+      "phone": "+58 212-7654321",
+      "email": "hr.office@organization.com",
+      "operational_status": "active"
+    },
+    {
+      "id": "3",
+      "name": "Technology Office",
+      "address": "unes, Av. 19 de Abril, San Cristóbal, piso 5",
+      "phone": "+58 212-9876543",
+      "email": "technology.office@organization.com",
+      "operational_status": "active"
+    },
+    {
+      "id": "4",
+      "name": "Administration Office",
+      "address": "unes, Av. 19 de Abril, San Cristóbal, piso 5",
+      "phone": "+58 212-8765432",
+      "email": "admin.office@organization.com",
+      "operational_status": "active"
+    },
+    {
+      "id": "5",
+      "name": "Study Control Office",
+      "address": "unes, Av. 19 de Abril, San Cristóbal, piso 5",
+      "phone": "+58 212-1357913",
+      "email": "study.control@organization.com",
+      "operational_status": "active"
+    },
+    {
+      "id": "6",
+      "name": "Academic Coordination Office",
+      "address": "unes, Av. 19 de Abril, San Cristóbal, piso 5",
+      "phone": "+58 212-2468135",
+      "email": "academic.coord@organization.com",
+      "operational_status": "active"
+    },
+    {
+      "id": "7",
+      "name": "Legal Consultancy Office",
+      "address": "unes, Av. 19 de Abril, San Cristóbal, piso 5",
+      "phone": "+58 212-3579246",
+      "email": "legal.consultancy@organization.com",
+      "operational_status": "active"
+    },
+    {
+      "id": "8",
+      "name": "Directorate",
+      "address": "unes, Av. 19 de Abril, San Cristóbal, planta baja",
+      "phone": "+58 212-4681357",
+      "email": "directorate@organization.com",
+      "operational_status": "active"
+    },
+    {
+      "id": "9",
+      "name": "Subdirectorate",
+      "address": "unes, Av. 19 de Abril, San Cristóbal, planta baja",
+      "phone": "+58 212-5792468",
+      "email": "subdirectorate@organization.com",
+      "operational_status": "active"
+    },
+    {
+      "id": "10",
+      "name": "General Services Office",
+      "address": "unes, Av. 19 de Abril, San Cristóbal, planta baja",
+      "phone": "+58 212-6813579",
+      "email": "general.services@organization.com",
+      "operational_status": "active"
+    },
+    {
+      "id": "11",
+      "name": "Warehouse",
+      "address": "unes, Av. 19 de Abril, San Cristóbal, planta baja",
+      "phone": "+58 212-1357246",
+      "email": "warehouse@organization.com",
+      "operational_status": "active"
+    },
+    {
+      "id": "12",
+      "name": "Office of Administration",
+      "address": "unes, Av. 19 de Abril, San Cristóbal, piso 5",
+      "phone": "+58 212-9753104",
+      "email": "admin.support@organization.com",
+      "operational_status": "active"
+    }
+  ]
+}
