@@ -8,9 +8,11 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import axios from 'axios';
 //-----------------------------------------------------------------------------------------------------
 
+
+
 const Departments = () => {
   
-  const Navigate = useNavigate(); //esto es para entrar en paginas creo 
+  const Navigate = useNavigate(); //esto es para redireccionar a otras paginas  
 
   //estado para editar 
   const [isEditing,setIsEditing] = useState(false) //inicia en falso ....esto son como banderas xd , programar god
@@ -24,7 +26,7 @@ const Departments = () => {
   //estado para la visibilidad del modal de add xd
   const [modalVisible, setModalVisible] = useState(false) 
 
-  //almacena los datos del formulario 
+  //almacena los datos del formulario , cuando llenamos el formulario
   const [formData, setFormData] = useState({  
     name: '',                      
     address: '',
@@ -35,21 +37,19 @@ const Departments = () => {
   })
   
   //guarda los datos del formulario 
-  const handleInputChange = (e) => {
+  const InputChangedata = (e) => { //e es como un parametro 
     const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
+    setFormData({ ...formData, [name]: value }) //deja todos los valores de formdata pero dejando el nuevo valor , osea por eso el name , eso variaria , puede ser name , addres etc
   }
   
   //-------------------------------------------------------------------------------------------
   const [deleteDptid,setDeleteDptid]=useState("") //guarda el id del dpt a eliminar (se podra usar lo mismo de editar?????)(se puede pero mas enredado)
 
     //funcion para eliminar un registro de la tabla de departamentos
-  const handleDelete = (id) => {
-    const updatedDepartments = departments.filter((department)=>department.id!==id)  //comparamos el id seleccionado con los del vector
+  const Delete = (id) => {
+    const updatedDepartments = departments.filter((department)=>department.id!==id)  //comparamos el id seleccionado con los del vector , y si son iguales lo descarta, ahora estaria entre comillas eliminado el que seleccione 
     setDepartments(updatedDepartments)  
     setMvisible(false)
-    console.log(id)
-
     axios.delete(`http://localhost:5000/departments/${id}`)   //esas comillas si o si xd
     .then(() => console.log(`Departamento con ID ${id} eliminado`))
     .catch(error => console.error("Error al eliminar departamento:", error))
@@ -76,7 +76,7 @@ const Departments = () => {
 
 
 
-  
+
 
   // al presionar el boton save , este envia o guarda los datos -----------------------------------------------
   const handleSubmit = () => {
@@ -197,7 +197,7 @@ const Departments = () => {
                   <CButton
                   className='buttom-accept'
                   onClick={() => 
-                    handleDelete(deleteDptid)}
+                    Delete(deleteDptid)}
                   >Yes</CButton>
               </div>
             </CModalBody>
@@ -236,7 +236,7 @@ const Departments = () => {
                   name='name'
                   placeholder='Department Name'
                   value={formData.name}
-                  onChange={handleInputChange}
+                  onChange={InputChangedata}
                 ></CFormInput>
                 </div>
                 <div className="mb-3">
@@ -247,7 +247,7 @@ const Departments = () => {
                     name='address'
                     placeholder='Address'
                     value={formData.address}
-                    onChange={handleInputChange}
+                    onChange={InputChangedata}
                   ></CFormInput>
                 </div>
                 <div className="mb-3">
@@ -258,7 +258,7 @@ const Departments = () => {
                     name='phone'
                     placeholder='Phone number'
                     value={formData.phone}
-                    onChange={handleInputChange}
+                    onChange={InputChangedata}
                   ></CFormInput>
                 </div>
                 <div className="mb-3">
@@ -269,7 +269,7 @@ const Departments = () => {
                     name='email'
                     placeholder='Email'
                     value={formData.email}
-                    onChange={handleInputChange}
+                    onChange={InputChangedata}
                   ></CFormInput>
                 </div>
                 <div className="mb-3">
@@ -278,7 +278,7 @@ const Departments = () => {
                     id='operational_status'
                     name='operational_status'
                     value={formData.operational_status}
-                    onChange={handleInputChange}
+                    onChange={InputChangedata}
                   >
                     <option value="">Select status</option>
                     <option value="active">Active</option>

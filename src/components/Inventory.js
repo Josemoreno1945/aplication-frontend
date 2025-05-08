@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { CCard, CCardHeader, CCardBody, CFormInput, CTable, CTableHead, CTableRow , CTableHeaderCell, CTableBody , CTableDataCell, CButton, CModal, CModalHeader, CModalBody, CFormLabel, CFormSelect,CForm, CModalFooter} from '@coreui/react'
 import { useParams } from 'react-router-dom';
 import "src/scss/inventory.scss";
 import CIcon from '@coreui/icons-react'
 import { cilListNumbered, cilPlus,cilX,cilPencil,cibDropbox} from '@coreui/icons'
-
+import axios from 'axios';
 
 
 const Inventory = () => {
@@ -30,7 +30,7 @@ const Inventory = () => {
     //osea lleno uno , se llena formdata y despues lo paso a inventory(otro arreglo)
     const [formData,setFormData]=useState([ 
         {
-            id: "",
+            id:"",
             type: "",
             classification: "",
             description: "",
@@ -53,139 +53,97 @@ const Inventory = () => {
             direction_dependency:"",
             level:"",
             analyst:"",
+            acquisition_date:""
+
         }
     ])
 
     //arreglo para almacenar todos los bienes o items(inventario)
-    const [inventory, setInventory] = useState([
-            {
-                
-                id: 1,
-                type: "Equipment",
-                classification: "Laptop",
-                description: "Dell XPS 15",
-                color: "Silver",
-                brand: "Dell",
-                model: "XPS 15",
-                serial: "12345ABC",
-                height: 2,
-                width: 15,
-                depth: 10,
-                plate: "",
-                bodywork: "",
-                engine: "",
-                year_of_the_vehicule: 0,
-                acquisition_value: 1500,
-                use_status: "Average",
-                conservation_status: "Optimal",
-                observation: "No issues",
-                physical_location:"CEFO TACHIRA",
-                direction_dependency:"sotano",
-                level:"operational",
-                analyst:"Maria Perez",
-            },
-            {
-                id: 2,
-                type: "Furniture",
-                classification: "Chair",
-                description: "Office Chair",
-                color: "Black",
-                brand: "IKEA",
-                model: "ErgoChair",
-                serial: "67890XYZ",
-                height: 4,
-                width: 2,
-                depth: 2,
-                plate: "",
-                bodywork: "",
-                engine: "",
-                year_of_the_vehicule: 0,
-                acquisition_value: 200,
-                use_status: "Optimal",
-                conservation_status: "Operative",
-                observation: "Brand new",
-                physical_location:"CEFO TACHIRA",
-                direction_dependency:"piso 5,oficina 1",
-                level:"operational",
-                analyst:"Pedro Martinez",
-            },
-            {
-                id: 3,
-                type: "Equipment",
-                classification: "Monitor",
-                description: "Samsung 4K Monitor",
-                color: "Black",
-                brand: "Samsung",
-                model: "U28E590D",
-                serial: "MON123456",
-                height: 18,
-                width: 28,
-                depth: 8,
-                plate: "",
-                bodywork: "",
-                engine: "",
-                year_of_the_vehicule: 0,
-                acquisition_value: 300,
-                use_status: "Optimal",
-                conservation_status: "Inoperative",
-                observation: "No issues",
-                physical_location:"CEFO TACHIRA",
-                direction_dependency:"planta baja",
-                level:"operational",
-                analyst:"Jose Rodriguez",
-            },
-            {
-                id: 4,
-                type: "Vehicles",
-                classification: "Car",
-                description: "Toyota Corolla",
-                color: "White",
-                brand: "Toyota",
-                model: "Corolla",
-                serial: "CAR987654",
-                height: 5,
-                width: 6,
-                depth: 15,
-                plate: "XYZ-123",
-                bodywork: "Sedan",
-                engine: "1.8L",
-                year_of_the_vehicule: 2020,
-                acquisition_value: 20000,
-                use_status: "Average",
-                conservation_status: "Operational",
-                observation: "Recently serviced",
-                physical_location:"CEFO TACHIRA",
-                direction_dependency:"planta baja",
-                level:"operational",
-                analyst:"Carlos Hernandez",
-            },
-    ]); 
+    const [inventory, setInventory] = useState([]); 
 
     //aja , esta funcion ejecuta o realiza , el proceso de eliminar un item de inventory 
 
 
 const [deleteitemid,setDeleteitemid]=useState("") 
 const [mvisible,setMvisible]=useState(false)
-//----------------------------------------------------------------------------------------------------------------------
-    //la misma vaina me la dio la ia , pero mas entendible , mas similar a lo que aprendi en c , con ciclos 
-        //funcion que recibe index como parametro
-        //creo un arreglo vacio que va a tener el item nuevo , osea vacio se puede decir
-        //for para recorrer el vector
-        //verificamos que i sea diferente a index , osea yo elijo 
-        //i=1 , index=1 , updateitem no va a tener el 1 , osea se lo salta 
-        //y ahora updateitem se llena , pero sin tener el 1 , o index
-    function deleteitem(deleteitemid){         
-        const updateitemxd=[]          
-        for(let i=0;i<inventory.length;i++){  
-            if(i!==deleteitemid){                           
-                updateitemxd.push(inventory[i])    
-            }
-        }
 
-        setInventory(updateitemxd) //y ahora se actualiza inventario , que ya no tendria el item 
-        setMvisible(false)
-        
+useEffect(() => {
+    if(departmentId === "0"){
+        axios.get("http://localhost:5000/inv0")
+        .then(response => setInventory(response.data))
+        .catch(error => console.error("Error al obtener datos", error));
     }
+    if(departmentId === "1"){
+        axios.get("http://localhost:5000/inv1")
+        .then(response => setInventory(response.data))
+        .catch(error => console.error("Error al obtener datos", error));
+    }
+    if(departmentId === "2"){
+        axios.get("http://localhost:5000/inv2")
+        .then(response => setInventory(response.data))
+        .catch(error => console.error("Error al obtener datos", error));
+    }
+    if(departmentId === "3"){
+        axios.get("http://localhost:5000/inv3")
+        .then(response => setInventory(response.data))
+        .catch(error => console.error("Error al obtener datos", error));
+    }
+    if(departmentId === "4"){
+        axios.get("http://localhost:5000/inv4")
+        .then(response => setInventory(response.data))
+        .catch(error => console.error("Error al obtener datos", error));
+    }
+    if(departmentId === "5"){
+        axios.get("http://localhost:5000/inv5")
+        .then(response => setInventory(response.data))
+        .catch(error => console.error("Error al obtener datos", error));
+    }
+    if(departmentId === "6"){
+        axios.get("http://localhost:5000/inv6")
+        .then(response => setInventory(response.data))
+        .catch(error => console.error("Error al obtener datos", error));
+    }
+    if(departmentId === "7"){
+        axios.get("http://localhost:5000/inv7")
+        .then(response => setInventory(response.data))
+        .catch(error => console.error("Error al obtener datos", error));
+    }
+    if(departmentId === "8"){
+        axios.get("http://localhost:5000/inv8")
+        .then(response => setInventory(response.data))
+        .catch(error => console.error("Error al obtener datos", error));
+    }
+    if(departmentId === "9"){
+        axios.get("http://localhost:5000/inv9")
+        .then(response => setInventory(response.data))
+        .catch(error => console.error("Error al obtener datos", error));
+    }
+    if(departmentId === "10"){
+        axios.get("http://localhost:5000/inv10")
+        .then(response => setInventory(response.data))
+        .catch(error => console.error("Error al obtener datos", error));
+    }
+    if(departmentId === "11"){
+        axios.get("http://localhost:5000/inv11")
+        .then(response => setInventory(response.data))
+        .catch(error => console.error("Error al obtener datos", error));
+    }
+    
+}, [departmentId]);
+
+//----------------------------------------------------------------------------------------------------------------------
+
+
+    const Deleteitem = (id) => {
+        const updatedInventory = inventory.filter((inv)=>inv.id!==id)  //comparamos el id seleccionado con los del vector , y si son iguales lo descarta, ahora estaria entre comillas eliminado el que seleccione 
+        setInventory(updatedInventory)  
+        setMvisible(false)
+        axios.delete(`http://localhost:5000/inv${departmentId}/${id}`)   //esas comillas si o si xd
+        .then(() => console.log(`assets con ID ${id} eliminado`))
+        .catch(error => console.error("Error al eliminar asset:", error))
+        }
+        
+    
 
 //---------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -208,15 +166,17 @@ const handleInputChange = (e) => {
 
 
     const handleSubmit = () => {
+
+        if(!formData.id || !formData.type || !formData.acquisition_date || !formData.classification){
+            alert("Please fill out all fields.")
+            return
+        }
         
-    if (!FormData.id 
-    ) {
-        alert('Please fill out all fields.')   
-        return
-    }
 
-
-    
+            axios.post(`http://localhost:5000/inv${departmentId}`,formData)
+            .then(response =>console.log("Datos recibidos:", response.data))
+            .then(response => setInventory(response.data))
+            .catch(error => console.error("Error al obtener datos", error));
 
 
         if (isEditing === true) {
@@ -254,13 +214,15 @@ const handleInputChange = (e) => {
                 direction_dependency:"",
                 level:"",
                 analyst:"",
+                acquisition_date:""
                 });
                 
     setOpenModal(false);
 
-    
 
 };
+
+
 
     return (
         <>
@@ -278,7 +240,7 @@ const handleInputChange = (e) => {
                     <CButton
                     className='buttom-accept'
                     onClick={() => 
-                        deleteitem(deleteitemid)}
+                        Deleteitem(deleteitemid)}
                     >Yes</CButton>
                 </div>
             </CModalBody>
@@ -318,6 +280,7 @@ const handleInputChange = (e) => {
                 direction_dependency:"",
                 level:"",
                 analyst:"",
+                acquisition_date:""
                 });
             setIsEditing(false)
             setOpenModal(true)}} >Add<CIcon icon={cilPlus} className="buttom-icon" />
@@ -328,7 +291,7 @@ const handleInputChange = (e) => {
             <CModalHeader className="Modal-header">Add new asset</CModalHeader>
             <CModalBody>
                 <CForm>
-                    <CFormLabel htmlFor="id">id:</CFormLabel>
+                    <CFormLabel htmlFor="id_assets">id:</CFormLabel>
                     <CFormInput
                     type="number"
                     id='id'
@@ -548,6 +511,16 @@ const handleInputChange = (e) => {
                     onChange={handleInputChange}
                     ></CFormInput>
 
+                    <CFormLabel htmlFor="acquisition_date">acquisition date</CFormLabel>
+                    <CFormInput
+                    type="date"
+                    id="acquisition_date"
+                    name="acquisition_date"
+                    placeholder="acquisition_date"
+                    value={formData.acquisition_date}
+                    onChange={handleInputChange}
+                    ></CFormInput>
+
                 </CForm>
                 
             </CModalBody>
@@ -602,7 +575,7 @@ const handleInputChange = (e) => {
                             {inventory.map((item, index) => (  
                                 <CTableRow key={index}>
                                     <CTableDataCell>{item.id}</CTableDataCell>
-                                    <CTableDataCell >{item.type}</CTableDataCell>
+                                    <CTableDataCell>{item.type}</CTableDataCell>
                                     <CTableDataCell>{item.classification}</CTableDataCell>
                                     <CTableDataCell>{item.description}</CTableDataCell>
                                     <CTableDataCell>{item.color}</CTableDataCell>
