@@ -1,9 +1,10 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { CRow, CCol, CCard, CCardHeader, CCardBody,CButton,CModal,CModalBody,CModalHeader,CModalFooter,CForm, CFormInput, CFormLabel, CFormSelect,
     CTable,CTableHead,CTableRow,CTableHeaderCell,CTableBody,CTableDataCell} from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPencil, cilX} from '@coreui/icons'
+import { cilListNumbered, cilPlus, cibDropbox, cilSearch, cilPencil, cilX} from '@coreui/icons'
 import "src/scss/edit.scss"
+import axios from 'axios';
 
 
 const Users = () => {
@@ -12,101 +13,35 @@ const Users = () => {
     const [userid, setuserid] = useState(null)
     const [modalVisible, setModalVisible] = useState(false)
     const[updateuser, setupdateuser] = useState(null)
-
-
-    const [users, setusers] = useState([
-        
-
-        {                
-                        id: 1,
-                        first_name: "Jose",
-                        last_name: "Moreno",
-                        username: "JM1301",
-                        rol: "Asset Manager",
-                        email: "josemoreno123@gmail.com",
-                        phone: "123456789",
-                        address: "Av. Los Agustinos",
-                        department: "Administration",
-                        status: "Active",
-                    },
-                    {
-                        id: 2,
-                        first_name: "Maria",
-                        last_name: "Sierra",
-                        username: "majo123",
-                        rol: "Department Head",
-                        email: "majosierra2004@gmail.com",
-                        phone: "987654321",
-                        address: "Caneyes, Vereda 6",
-                        department: "Study Control",
-                        status: "Active",
-                    },
-                    {
-                        id: 3,
-                        first_name: "Pedro",
-                        last_name: "Perez",
-                        username: "pedrito988",
-                        rol: "Department Head",
-                        email: "perezpedro1@gmail.com",
-                        phone: "123123123",
-                        address: "Barrio Obrero",
-                        department: "Subdirection",
-                        status: "Inactive",
-                    },
-                    {
-                        id: 4,
-                        first_name: "Luisa",
-                        last_name: "Marquez",
-                        username: "luisamarq",
-                        rol: "Department Head",
-                        email: "marquezluisa2@gmail.com",
-                        phone: "887655456",
-                        address: "Av. Ferrero Tamayo",
-                        department: "Human Resources",
-                        status: "Active",
-                    },
-                    {
-                        id: 5,
-                        first_name: "Mariana",
-                        last_name: "Morales",
-                        username: "morales123",
-                        rol: "Department Head",
-                        email: "marianacm@gmail.com",
-                        phone: "098678543",
-                        address: "El Junco",
-                        department: "Legal Consulting",
-                        status: "Active",
-                    },
-                    {
-                        id: 6,
-                        first_name: "Omar",
-                        last_name: "Lopez",
-                        username: "omarrlopez",
-                        rol: "Department Head",
-                        email: "omar2lopez@gmail.com",
-                        phone: "111222333",
-                        address: "Pueblo Nuevo",
-                        department: "Technology",
-                        status: "Inactive",
-                    },
-                    {
-                        id: 7,
-                        first_name: "Pedro",
-                        last_name: "Martinez",
-                        username: "pedromarti",
-                        rol: "Department Head",
-                        email: "pmartinez@gmail.com",
-                        phone: "998764321",
-                        address: "La Concordia",
-                        department: "General Services",
-                        status: "Active",
-                    },
-    ])
-
-
-
     
+    const [users, setusers] = useState([ ])
 
+    useEffect(() => {
+        axios.get("http://localhost:5000/users")
+          .then(response => setusers(response.data))
+          .catch(error => console.error("Error al obtener datos", error));
+      }, []);
+    
+        const [search, setSearch] = useState("");
+
+        let filtroUsuario =[]
+
+        if(search === ""){
+            filtroUsuario=users
+        }else{
+            filtroUsuario=users.filter((user) =>
+                user.first_name.toLowerCase().includes(search.toLowerCase())||
+                user.last_name.toLowerCase().includes(search.toLowerCase())||
+                user.username.toLowerCase().includes(search.toLowerCase())||
+                user.rol.toLowerCase().includes(search.toLowerCase())||
+                user.email.toLowerCase().includes(search.toLowerCase())||
+                user.phone.toLowerCase().includes(search.toLowerCase())||
+                user.address.toLowerCase().includes(search.toLowerCase())||
+                user.department.toLowerCase().includes(search.toLowerCase())||
+                user.status.toLowerCase().includes(search.toLowerCase())
+        );
+        }
+    
     const handleDelete = (index) => {
         const updateduser = users.filter((_, i) => i !== index) //busca el user que eliminamos
         setusers(updateduser)  //actualiza el arreglo de user
@@ -131,6 +66,8 @@ const Users = () => {
           setuserid(null) // limpia el id del user
         }
       }
+
+
 
     return (
         <>
@@ -226,12 +163,15 @@ const Users = () => {
                 <CFormInput
                     type="text"
                     placeholder="Search for a user"
+                    value={search}
+                    onChange={(e)=>setSearch(e.target.value)}
                 ></CFormInput>
             </CCardHeader>
         </CCard>
         <div className='table-responsive'>
         <CTable>
             <CTableHead>
+          
                 <CTableRow>
                     <CTableHeaderCell>#</CTableHeaderCell>
                     <CTableHeaderCell>First name</CTableHeaderCell>
@@ -246,9 +186,10 @@ const Users = () => {
                     <CTableHeaderCell></CTableHeaderCell>
                     <CTableHeaderCell></CTableHeaderCell>
                 </CTableRow>
+                
             </CTableHead>
             <CTableBody>
-                {users.map((user, index) => (
+                {filtroUsuario.map((user, index) => (
                     <CTableRow key={index}>
                         
                         <CTableDataCell>{user.id}</CTableDataCell>

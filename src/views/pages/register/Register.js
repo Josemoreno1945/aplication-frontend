@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useEffect,useState} from 'react'
 import {
   CButton,
   CCard,
@@ -15,8 +15,30 @@ import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import fondo1 from '../../../assets/images/fondo2.jpg'
 import 'src/scss/register.scss'
+import axios from 'axios'; 
+import { href } from 'react-router-dom'
 
 const Register = () => {
+
+const [formData, setFormData]=useState([
+  {
+    first_name:"",
+    last_name:"",
+    username:"",
+    password:"",
+    email:""
+  }
+])
+
+const ImputChangeData = (e) => {
+  const {name, value} = e.target
+  setFormData({ ...formData, [name]: value})
+}
+
+const savebutton=() => {
+  axios.post("http://localhost:5000/users", formData)
+}
+
   return (
     <div
       style={{
@@ -44,7 +66,22 @@ const Register = () => {
                         }}
                       />
                     </CInputGroupText>
-                    <CFormInput placeholder="Username" autoComplete="username" />
+                    <CFormInput
+                      type="text"
+                      placeholder="Fist Name"
+                      value={formData.first_name}
+                      onChange={ImputChangeData}
+                    />
+                    <CFormInput
+                      type="text"
+                      placeholder="Last Name"
+                      value={formData.last_name}
+                      onChange={ImputChangeData}
+                    />
+                    <CFormInput placeholder="Username" autoComplete="username" 
+                     value={formData.username}
+                    onChange={ImputChangeData}
+                    />
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText
@@ -54,7 +91,9 @@ const Register = () => {
                     >
                       @
                     </CInputGroupText>
-                    <CFormInput placeholder="Email" autoComplete="email" />
+                    <CFormInput placeholder="Email" autoComplete="email"
+                      value={formData.email}
+                      onChange={ImputChangeData} />
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
@@ -84,10 +123,17 @@ const Register = () => {
                       type="password"
                       placeholder="Repeat password"
                       autoComplete="new-password"
+                      value={formData.password}
+                      onChange={ImputChangeData}
                     />
                   </CInputGroup>
                   <div className="button_create">
-                    <CButton>Create Account</CButton>
+                    <CButton
+                    onClick={()=>{
+                      savebutton()
+                      window.location.href="#"
+                    }}
+                    >Create Account</CButton>
                   </div>
                 </CForm>
               </CCardBody>

@@ -1,3 +1,4 @@
+import { cilReportSlash } from '@coreui/icons'
 import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
@@ -6,6 +7,7 @@ const Typography = React.lazy(() => import('./views/theme/typography/Typography'
 //----------------------------------------------------------------------------
 const Users= React.lazy(() => import('./views/management/Users/users'))
 const Departments= React.lazy(() => import('./views/management/Departments/departments'))
+const reports= React.lazy(() => import('./components/reports'))
 
 // Base
 const Accordion = React.lazy(() => import('./views/base/accordion/Accordion'))
@@ -103,6 +105,8 @@ const routes = [
   //------------------------------------------------------------------------------
   { path: '/management/Users', name: 'Management', element: Users, exact: true },
   { path: '/management/Departments', name: 'Departments', element: Departments , exact: true },
+  { path: '/components/reports', name: 'reports', element: reports , exact: true },
+
 ]
 
 export default routes
