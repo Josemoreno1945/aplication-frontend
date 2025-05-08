@@ -10,7 +10,32 @@ import axios from 'axios';
 
 const report = () => {
 
-console.log("nose")
+
+const [formData, setFormData]=useState(
+  {
+    Username:"",
+    department:"",
+    report:""
+  }
+)
+
+const[reports, setReports]=useState([])
+
+const ImputChangeData = (e) => {
+    const {name, value} = e.target
+    setFormData({ ...formData, [name]: value})
+  }
+
+const accept=() => {
+  axios.post("http://localhost:5000/reports", formData)
+  .then(()=>axios.get("http://localhost:5000/reports"))
+}
+
+    useEffect(() => {
+        axios.get("http://localhost:5000/reports")
+          .then(response => setReports(response.data))
+          .catch(error => console.error("Error al obtener datos", error));
+      }, []);
 
     return(
         <>
@@ -27,7 +52,12 @@ console.log("nose")
                         }}
                       />
                     </CInputGroupText>
-                    <CFormInput placeholder="Username"/>
+                    <CFormInput placeholder="Username"
+                         value={formData.Username}
+                         name='Username'
+                         required
+                        onChange={ImputChangeData}/>
+                        
                     </CInputGroup>
                     <CInputGroup>
                     <CInputGroupText>
@@ -38,7 +68,11 @@ console.log("nose")
                          }}
                          />
                         </CInputGroupText>
-                    <CFormInput placeholder="Department"/>
+                    <CFormInput placeholder="Department"
+                        value={formData.department}
+                        name='department'
+                        required
+                        onChange={ImputChangeData}/>
                     </CInputGroup>
                     <CInputGroup>
                     <CInputGroupText>
@@ -49,17 +83,52 @@ console.log("nose")
                          }}
                          />
                         </CInputGroupText>
-                    <CFormTextarea placeholder="Report">
+                    <CFormTextarea placeholder="Report"
+                        value={formData.report}
+                        name='report'
+                        required
+                        onChange={ImputChangeData}>
                     </CFormTextarea>
                     </CInputGroup>
+                    <CButton className="button_edit"
+                    onClick={()=>{
+                        accept()
+                    }}
+                    >
+                        Accept
+                    </CButton>
                     </CForm>
                 </CCardBody>
                 <CCardFooter>
-                    <CButton className="button_edit">
-                        Accept
-                    </CButton>
+             
                 </CCardFooter>
         </CCard>
+
+<div className='table-responsive mt-4' >
+        <CTable>
+            <CTableHead>
+          
+                <CTableRow>
+                    <CTableHeaderCell>Username</CTableHeaderCell>
+                    <CTableHeaderCell>Department</CTableHeaderCell>
+                    <CTableHeaderCell>Report</CTableHeaderCell>
+                </CTableRow>
+                
+            </CTableHead>
+            <CTableBody>
+                {reports.map((r, index) => (
+                    <CTableRow key={index}>
+                        
+                        <CTableDataCell>{r.Username}</CTableDataCell>
+                        <CTableDataCell>{r.department}</CTableDataCell>
+                        <CTableDataCell>{r.report}</CTableDataCell>
+
+                    </CTableRow>
+                ))}
+            </CTableBody>
+        </CTable>
+        </div>
+
         </>
     )
 }

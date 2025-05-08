@@ -9,7 +9,6 @@ const Users= React.lazy(() => import('./views/management/Users/users'))
 
 
 const reports= React.lazy(() => import('./components/reports'))
-=======
 const Departments= React.lazy(() => import('src/views/management/departments/departments.js'))
 
 
@@ -107,7 +106,6 @@ const routes = [
   { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
   { path: '/widgets', name: 'Widgets', element: Widgets },
   //------------------------------------------------------------------------------
-  { path: '/management/Users', name: 'Management', element: Users, exact: true },
   { path: '/management/Departments', name: 'Departments', element: Departments , exact: true },
   { path: '/components/reports', name: 'reports', element: reports , exact: true },
 

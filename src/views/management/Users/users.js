@@ -1,13 +1,14 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import { CRow, CCol, CCard, CCardHeader, CCardBody,CButton,CModal,CModalBody,CModalHeader,CModalFooter,CForm, CFormInput, CFormLabel, CFormSelect,
-    CTable,CTableHead,CTableRow,CTableHeaderCell,CTableBody,CTableDataCell} from '@coreui/react'
+    CTable,CTableHead,CTableRow,CTableHeaderCell,CTableBody} from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilListNumbered, cilPlus, cibDropbox, cilSearch, cilPencil, cilX} from '@coreui/icons'
 import "src/scss/edit.scss"
 import axios from 'axios';
+import "src/scss/departments.scss"
 
 
-const Users = () => {
+const Users = () => {s
 
     const [isEditing,setIsEditing] = useState(false)
     const [userid, setuserid] = useState(null)
@@ -17,7 +18,7 @@ const Users = () => {
     const [users, setusers] = useState([ ])
 
     useEffect(() => {
-        axios.get("http://localhost:5000/users")
+        axios.get("http://localhost:5000/user")
           .then(response => setusers(response.data))
           .catch(error => console.error("Error al obtener datos", error));
       }, []);
@@ -30,22 +31,18 @@ const Users = () => {
             filtroUsuario=users
         }else{
             filtroUsuario=users.filter((user) =>
-                user.first_name.toLowerCase().includes(search.toLowerCase())||
-                user.last_name.toLowerCase().includes(search.toLowerCase())||
-                user.username.toLowerCase().includes(search.toLowerCase())||
-                user.rol.toLowerCase().includes(search.toLowerCase())||
-                user.email.toLowerCase().includes(search.toLowerCase())||
-                user.phone.toLowerCase().includes(search.toLowerCase())||
-                user.address.toLowerCase().includes(search.toLowerCase())||
-                user.department.toLowerCase().includes(search.toLowerCase())||
-                user.status.toLowerCase().includes(search.toLowerCase())
+                user.first_name?.toLowerCase().includes(search.toLowerCase())||
+                user.last_name?.toLowerCase().includes(search.toLowerCase())||
+                user.username?.toLowerCase().includes(search.toLowerCase())||
+                user.rol?.toLowerCase().includes(search.toLowerCase())||
+                user.email?.toLowerCase().includes(search.toLowerCase())||
+                user.phone?.toLowerCase().includes(search.toLowerCase())||
+                user.address?.toLowerCase().includes(search.toLowerCase())||
+                user.department?.toLowerCase().includes(search.toLowerCase())||
+                user.status?.toLowerCase().includes(search.toLowerCase())
         );
         }
     
-    const handleDelete = (index) => {
-        const updateduser = users.filter((_, i) => i !== index) //busca el user que eliminamos
-        setusers(updateduser)  //actualiza el arreglo de user
-      }
 
   
 
@@ -56,7 +53,7 @@ const Users = () => {
         setModalVisible(true) //muestra el modal o mejor dicho el formulario
       }
 
-      const handleSave = () => {
+      const handleSve = () => {
         if (userid !== null) {
           const updatedUsers = [...users]
           updatedUsers[userid] = updateuser // actualiza el user en la posicion correspondiente
@@ -67,15 +64,52 @@ const Users = () => {
         }
       }
 
+    const [mVisible, setMlVisible]=useState(false)
+
+    const [deleteUserid, setdeleteUserid]=useState("")
+
+    const handleDelete = (id) => {
+        const updateduser = users.filter((u) => u.id !== id) //busca el user que eliminamos
+        setusers(updateduser)  //actualiza el arreglo de user
+        setMlVisible(false)
+        axios.delete(`https://localhost:5000/users/${id}`)
+        .then(() => console.log(`User con Id ${id} eliminado`))
+        .catch(error => console.error("Error al eliminar usuario:", error))
+      }
+
 
 
     return (
         <>
-
+ 
+        <CModal visible={mVisible} onClose={() => setMlVisible(false)}>
+            <CModalHeader className='Modal-header'>Delete User</CModalHeader>
+            <CFormLabel className='label-delete'>Are you sure you want to delete?</CFormLabel>
+            <CModalBody>
+                <div className='box-buttom-accept'>
+                    <CButton className='buttom-accept'
+                    onClick={() => setMlVisible(false)}>
+                    No
+                    </CButton>
+                    <CButton className='buttom-accept'
+                    onClick={() => handleDelete(deleteUserid)}>
+                    Yes
+                    </CButton>
+                </div>
+            </CModalBody>
+        </CModal>
 
         <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
             <CModalHeader className="header_edit">Editing</CModalHeader>
                         <CModalBody>
+                    <CFormLabel>id</CFormLabel>
+                <CFormInput
+                    type="text"
+                    value={updateuser?.id || ''}
+                    onChange={(e) => 
+                        setupdateuser({ ...updateuser, id: e.target.value})
+                    }
+                    />
                         <CFormLabel>First Name</CFormLabel>
                 <CFormInput
                     type="text"
@@ -158,16 +192,18 @@ const Users = () => {
         </CModal>
 
 
-        <CCard className="mb-4">
-            <CCardHeader>
-                <CFormInput
+        <div className="buscador">
+            <CForm className="d-flex">
+                <CFormInput className="input-buttom-search"
                     type="text"
                     placeholder="Search for a user"
                     value={search}
                     onChange={(e)=>setSearch(e.target.value)}
                 ></CFormInput>
-            </CCardHeader>
-        </CCard>
+                <CButton className="search-buttom"><CIcon className="icon-search" icon={cilSearch}></CIcon></CButton>
+            </CForm>
+        </div>
+
         <div className='table-responsive'>
         <CTable>
             <CTableHead>
@@ -208,7 +244,10 @@ const Users = () => {
                             </CButton>
                         </CTableDataCell>
                         <CTableDataCell>
-                            <CButton onClick={() => handleDelete(index)}>
+                            <CButton onClick={() =>{ 
+                                setdeleteUserid(user.id)
+                                setMlVisible(true)
+                             }}>
                                 <CIcon icon={cilX} />
                             </CButton>
                         </CTableDataCell>
