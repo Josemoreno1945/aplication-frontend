@@ -1,9 +1,10 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { CRow, CCol, CCard, CCardHeader, CCardBody,CButton,CModal,CModalBody,CModalHeader,CModalFooter,CForm, CFormInput, CFormLabel, CFormSelect,
     CTable,CTableHead,CTableRow,CTableHeaderCell,CTableBody,CTableDataCell} from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPencil, cilX} from '@coreui/icons'
+import { cilListNumbered, cilPlus, cibDropbox, cilSearch, cilPencil, cilX} from '@coreui/icons'
 import "src/scss/edit.scss"
+import axios from 'axios';
 
 
 const Users = () => {
@@ -12,66 +13,61 @@ const Users = () => {
     const [userid, setuserid] = useState(null)
     const [modalVisible, setModalVisible] = useState(false)
     const[updateuser, setupdateuser] = useState(null)
-
-
-    const [users, setusers] = useState([
-        
-
-        {                
-                        id: 1,
-                        first_name: "Jose",
-                        last_name: "Moreno",
-                        username: "JM1301",
-                        rol: "Asset Manager",
-                        email: "josemoreno123@gmail.com",
-                        phone: "123456789",
-                        address: "Av. Los Agustinos",
-                        department: "Administration",
-                        status: "Active",
-                    },
-                    {
-                        id: 2,
-                        first_name: "Maria",
-                        last_name: "Sierra",
-                        username: "majo123",
-                        rol: "Department Head",
-                        email: "majosierra2004@gmail.com",
-                        phone: "987654321",
-                        address: "Caneyes, Vereda 6",
-                        department: "Study Control",
-                        status: "Active",
-                    },
-                    {
-                        id: 3,
-                        first_name: "Pedro",
-                        last_name: "Perez",
-                        username: "pedrito988",
-                        rol: "Department Head",
-                        email: "perezpedro1@gmail.com",
-                        phone: "123123123",
-                        address: "Barrio Obrero",
-                        department: "Subdirection",
-                        status: "Inactive",
-                    },
-    ])
-
-
-
     
+    const [users, setusers] = useState([ ])
 
+    useEffect(() => {
+        axios.get("http://localhost:5000/users")
+          .then(response => setusers(response.data))
+          .catch(error => console.error("Error al obtener datos", error));
+      }, []);
+    
+        const [search, setSearch] = useState("");
+
+        let filtroUsuario =[]
+
+        if(search === ""){
+            filtroUsuario=users
+        }else{
+            filtroUsuario=users.filter((user) =>
+                user.first_name.toLowerCase().includes(search.toLowerCase())||
+                user.last_name.toLowerCase().includes(search.toLowerCase())||
+                user.username.toLowerCase().includes(search.toLowerCase())||
+                user.rol.toLowerCase().includes(search.toLowerCase())||
+                user.email.toLowerCase().includes(search.toLowerCase())||
+                user.phone.toLowerCase().includes(search.toLowerCase())||
+                user.address.toLowerCase().includes(search.toLowerCase())||
+                user.department.toLowerCase().includes(search.toLowerCase())||
+                user.status.toLowerCase().includes(search.toLowerCase())
+        );
+        }
+    
     const handleDelete = (index) => {
-        const updateduser = users.filter((_, i) => i !== index) //busca el dpt q eliminamos
-        setusers(updateduser)  //actualiza el arreglo de dpts
+        const updateduser = users.filter((_, i) => i !== index) //busca el user que eliminamos
+        setusers(updateduser)  //actualiza el arreglo de user
       }
 
   
 
       const Editregister = (index) => {
-        setupdateuser(users[index]) //accedo al departamento elegido 
+        setupdateuser(users[index]) //accedo al user elegido 
         setIsEditing(true) //cambio el estado a true para editar
-        setuserid(index) //guarda el id del dpt
+        setuserid(index) //guarda el id del user
         setModalVisible(true) //muestra el modal o mejor dicho el formulario
       }
+
+      const handleSave = () => {
+        if (userid !== null) {
+          const updatedUsers = [...users]
+          updatedUsers[userid] = updateuser // actualiza el user en la posicion correspondiente
+          setusers(updatedUsers) // actualiza el estado con el nuevo arreglo
+          setModalVisible(false) // cierra el modal
+          setIsEditing(false) // cambia la bandera de edición
+          setuserid(null) // limpia el id del user
+        }
+      }
+
+
 
     return (
         <>
@@ -154,7 +150,7 @@ const Users = () => {
                     />
                         </CModalBody>
                     <CModalFooter className="footer_edit">
-                         <CButton className="button_edit">
+                         <CButton className="button_edit" onClick={handleSave}>
                             Accept
                         </CButton>
                     </CModalFooter>
@@ -167,12 +163,15 @@ const Users = () => {
                 <CFormInput
                     type="text"
                     placeholder="Search for a user"
+                    value={search}
+                    onChange={(e)=>setSearch(e.target.value)}
                 ></CFormInput>
             </CCardHeader>
         </CCard>
         <div className='table-responsive'>
         <CTable>
             <CTableHead>
+          
                 <CTableRow>
                     <CTableHeaderCell>#</CTableHeaderCell>
                     <CTableHeaderCell>First name</CTableHeaderCell>
@@ -187,9 +186,10 @@ const Users = () => {
                     <CTableHeaderCell></CTableHeaderCell>
                     <CTableHeaderCell></CTableHeaderCell>
                 </CTableRow>
+                
             </CTableHead>
             <CTableBody>
-                {users.map((user, index) => (
+                {filtroUsuario.map((user, index) => (
                     <CTableRow key={index}>
                         
                         <CTableDataCell>{user.id}</CTableDataCell>
