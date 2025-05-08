@@ -1,23 +1,18 @@
-import React, { useEffect, useState, createRef } from 'react'
-import PropTypes from 'prop-types'
-import classNames from 'classnames'
-import { CRow, CCol, CCard, CCardHeader, CCardBody,CButton,CModal,CModalBody,CModalHeader,CModalFooter,CForm, CFormInput, CFormLabel, CFormSelect,
+import React, { useEffect, useState} from 'react'
+import { CCard, CCardHeader, CCardBody,CButton,CModal,CModalBody,CModalHeader,CModalFooter,CForm, CFormInput, CFormLabel, CFormSelect,
 CTable,CTableHead,CTableRow,CTableHeaderCell,CTableBody,CTableDataCell} from '@coreui/react'
-import { rgbToHex } from '@coreui/utils'
-import { DocsLink } from 'src/components'
 import 'src/scss/departments.scss'
 import CIcon from '@coreui/icons-react'
 import { cilListNumbered, cilPlus,cilX,cilPencil,cibDropbox,cilSearch} from '@coreui/icons'
 import { Navigate, useNavigate } from 'react-router-dom'
-
-//---------------------------------------------------------------------------------------------------
-
-
+import axios from 'axios';
 //-----------------------------------------------------------------------------------------------------
 
-const Departments = () => {
 
-  const Navigate = useNavigate(); //esto es para entrar en paginas creo 
+
+const Departments = () => {
+  
+  const Navigate = useNavigate(); //esto es para redireccionar a otras paginas  
 
   //estado para editar 
   const [isEditing,setIsEditing] = useState(false) //inicia en falso ....esto son como banderas xd , programar god
@@ -25,40 +20,13 @@ const Departments = () => {
   //variable que guarda el id del departamento a editar
   const [departmentId, setDepartmentId] = useState(null)  //en null pq no hay nada , solo se llena cuando se edita 
 
-
-
   //arreglo que almacena los departamentos
-  const [departments, setDepartments] = useState([
-          { 
-            id:'666',
-            name: 'Human Resources',                      
-            address: 'unes, Av. 19 de Abril, San Cristóbal, piso 5',
-            phone: '+58 212-7654321',
-            email: 'hr.office@organization.com',
-            operational_status: 'active',
-        },
-        {               
-          id:'123',
-          name: 'Technology Office',                      
-          address: 'unes, Av. 19 de Abril, San Cristóbal, piso 5',
-          phone: '+58 212-9876543',
-          email: 'technology.office@organization.com',
-          operational_status: 'active',
-      },
-      { 
-        id:'321',
-        name: 'National Assets Office',                      
-        address: 'unes, Av. 19 de Abril, San Cristóbal, piso 5',
-        phone: '+58 212-1234567',
-        email: 'assets.office@organization.com',
-        operational_status: 'active',
-    },
-    
-  ]) 
+  const [departments, setDepartments] = useState([]) 
 
   //estado para la visibilidad del modal de add xd
   const [modalVisible, setModalVisible] = useState(false) 
-  //almacena los datos del formulario , setFromdata funcion q se usa para actualizar los valores de formdata
+
+  //almacena los datos del formulario , cuando llenamos el formulario
   const [formData, setFormData] = useState({  
     name: '',                      
     address: '',
@@ -68,69 +36,100 @@ const Departments = () => {
       
   })
   
-  //esta asociado al lo anterior , es lo que guarda los datos del formulario 
-  const handleInputChange = (e) => {
+  //guarda los datos del formulario 
+  const InputChangedata = (e) => { //e es como un parametro 
     const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
+    setFormData({ ...formData, [name]: value }) //deja todos los valores de formdata pero dejando el nuevo valor , osea por eso el name , eso variaria , puede ser name , addres etc
   }
   
   //-------------------------------------------------------------------------------------------
-  const [deleteDptid,setDeleteDptid]=useState("") //guarda el id del dpt a eliminar (se podra usar lo mismo de editar?????)
+  const [deleteDptid,setDeleteDptid]=useState("") //guarda el id del dpt a eliminar (se podra usar lo mismo de editar?????)(se puede pero mas enredado)
 
     //funcion para eliminar un registro de la tabla de departamentos
-  const handleDelete = (id) => {
-    const updatedDepartments = departments.filter((department)=>department.id!==id)  //comparamos el id seleccionado con los del vector
+  const Delete = (id) => {
+    const updatedDepartments = departments.filter((department)=>department.id!==id)  //comparamos el id seleccionado con los del vector , y si son iguales lo descarta, ahora estaria entre comillas eliminado el que seleccione 
     setDepartments(updatedDepartments)  
     setMvisible(false)
+    axios.delete(`http://localhost:5000/departments/${id}`)   //esas comillas si o si xd
+    .then(() => console.log(`Departamento con ID ${id} eliminado`))
+    .catch(error => console.error("Error al eliminar departamento:", error))
   }
+
+
+
+
+
 
   //ahora una funcion para editar un registro 
 
   const Editregister = (index) => {
-    setFormData(departments[index]) //accedo al departamento elegido 
-    setIsEditing(true) //cambio el estado a true para editar
-    setDepartmentId(index) //guarda el id del dpt
-    setModalVisible(true) //muestra el modal o mejor dicho el formulario
+      const departmentToEdit = departments[index];
+      setFormData(departmentToEdit) //accedo al departamento elegido 
+      setIsEditing(true) //cambio el estado a true para editar
+      setDepartmentId(departmentToEdit.id) //guarda el id del dpt
+      setModalVisible(true) //muestra el modal o mejor dicho el formulario
+    
+    
   }
+
+
+
 
 
 
 
   // al presionar el boton save , este envia o guarda los datos -----------------------------------------------
   const handleSubmit = () => {
+
     if (!formData.name || !formData.address || !formData.phone || !formData.email || !formData.operational_status) {
-      //verifica si los campos estan vacios , y si los estan manda un mensaje 
       alert('Please fill out all fields.')   
       return
     }
-
     {/*si el correo no tiene alrroba y el .com manda alerta*/}
     if (!formData.email.includes("@") || !formData.email.includes(".com")) {
       alert('Please enter a valid email address.')
       return
     }
 
-        //departamentos :
-        setDepartments([...departments,formData]) //aqui se guardan los departamentos previamente llenados , osea del formulario
-        
-        setFormData({  //limpia el formulario
-          name: '',
-          address: '',
-          phone: '',
-          email: '',
-          operational_status: '',
-        })
-        setModalVisible(false) 
+//---------------------------------------------------------------------------------------------------
+//envia los datos del formulario al json , asi que hay un post , pero tambien un get para que automaticamente me muestre los datos
+
+    axios.post("http://localhost:5000/departments", formData)
+    .then(() => axios.get("http://localhost:5000/departments")) 
+    .then(response => {
+      setDepartments(response.data);
+    })
+    .catch(error => console.error("Error al agregar departamento:", error));
+  
+
 
     //-------------------------------------------------------------------
     //ahora in if , solo es cuando se esta editando , esto lo sabemos con banderas . cuando isediting sea true entra
     if (isEditing=== true) {
-      const updatedDepartments = [...departments] //mete los departamentos a un nuevo arreglo 
-      updatedDepartments[departmentId] = formData  //en update posicion 1 va guadar el nuevo registro , osea formdata guarda cada nuevo registro
-      setDepartments(updatedDepartments) //actualiza el arreglo de departamentos
-      setIsEditing(false) //cambia la bandera a false 
-      setDepartmentId(null) //limpia la variable de id 
+      axios.put(`http://localhost:5000/departments/${departmentId}`,formData)
+      .then(()=>{
+        const updatedDepartments = [...departments] //mete los departamentos a un nuevo arreglo 
+        const index = updatedDepartments.findIndex(department => department.id === departmentId);
+        if (index !== -1) {
+          updatedDepartments[index] = formData;
+          setDepartments(updatedDepartments); // Actualiza el estado con los departamentos editados
+        }
+        setIsEditing(false) //cambia la bandera a false 
+        setDepartmentId(null) //limpia la variable de id 
+      })
     }
+
+
+    setFormData({  //limpia el formulario
+      name: '',
+      address: '',
+      phone: '',
+      email: '',
+      operational_status: '',
+    })
+    setModalVisible(false) 
+
+
   }
   
   
@@ -156,6 +155,14 @@ const Departments = () => {
   const [mvisible,setMvisible]=useState(false)
 
 
+  
+  useEffect(() => {
+    axios.get("http://localhost:5000/departments")
+      .then(response => setDepartments(response.data))
+      .catch(error => console.error("Error al obtener datos", error));
+  }, []);
+
+
 
   return (
     <>
@@ -178,18 +185,20 @@ const Departments = () => {
 
 
             <CModal visible={mvisible} onClose={() => setMvisible(false)}>
-            <CModalHeader>Delete department</CModalHeader>
-            <CFormLabel>Are you sure you want to delete?</CFormLabel>
+            <CModalHeader className='Modal-header'>Delete department</CModalHeader>
+            <CFormLabel className='label-delete'>Are you sure you want to delete?</CFormLabel>
             <CModalBody>
-            <CButton
-              className='buttom-accept'
-              onClick={() =>setMvisible(false)}
-              >No</CButton>
-            <CButton
-              className='buttom-accept'
-              onClick={() => 
-                handleDelete(deleteDptid)}
-              >Yes</CButton>
+              <div className='box-buttom-accept'>
+                    <CButton
+                  className='buttom-accept'
+                  onClick={() =>setMvisible(false)}
+                  >No</CButton>
+                  <CButton
+                  className='buttom-accept'
+                  onClick={() => 
+                    Delete(deleteDptid)}
+                  >Yes</CButton>
+              </div>
             </CModalBody>
           </CModal>
 
@@ -226,7 +235,7 @@ const Departments = () => {
                   name='name'
                   placeholder='Department Name'
                   value={formData.name}
-                  onChange={handleInputChange}
+                  onChange={InputChangedata}
                 ></CFormInput>
                 </div>
                 <div className="mb-3">
@@ -237,7 +246,7 @@ const Departments = () => {
                     name='address'
                     placeholder='Address'
                     value={formData.address}
-                    onChange={handleInputChange}
+                    onChange={InputChangedata}
                   ></CFormInput>
                 </div>
                 <div className="mb-3">
@@ -248,7 +257,7 @@ const Departments = () => {
                     name='phone'
                     placeholder='Phone number'
                     value={formData.phone}
-                    onChange={handleInputChange}
+                    onChange={InputChangedata}
                   ></CFormInput>
                 </div>
                 <div className="mb-3">
@@ -259,7 +268,7 @@ const Departments = () => {
                     name='email'
                     placeholder='Email'
                     value={formData.email}
-                    onChange={handleInputChange}
+                    onChange={InputChangedata}
                   ></CFormInput>
                 </div>
                 <div className="mb-3">
@@ -268,7 +277,7 @@ const Departments = () => {
                     id='operational_status'
                     name='operational_status'
                     value={formData.operational_status}
-                    onChange={handleInputChange}
+                    onChange={InputChangedata}
                   >
                     <option value="">Select status</option>
                     <option value="active">Active</option>
@@ -308,7 +317,6 @@ const Departments = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>      
-              {/*ahora en el body de la tabla mostramos los datos almacenados*/}
               {/*map es una funcion que se usa para recorrer un arreglo , en este caso es el de departments*/}
               {/*el index , esta vaina es como un ciclo recorriendo un vector , department es el vector en cuestion y key es como un id , indentificador*/}
               {filteredDepartment.map((department, index) => (          

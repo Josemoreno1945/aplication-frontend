@@ -120,8 +120,6 @@
 }
 
 .buttom-accept{
-    
-
     background-color: #756f6c;
     color: white;
     padding: 10px 20px;
@@ -137,4 +135,14 @@
         color: white;
         transform: scale(1.10);
     }
+}
+
+.box-buttom-accept{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.label-delete{
+    position: relative;
+    left: 25%;
 }

@@ -1,10 +1,7 @@
-import React from 'react'
+import React, { use, useEffect, useState } from 'react'
 import classNames from 'classnames'
 import { CChartBar } from "@coreui/react-chartjs";
 import { CChartPie } from "@coreui/react-chartjs";
-import { CSpinner } from '@coreui/react'
-
-
 
 
 
@@ -50,18 +47,127 @@ import {
   cilUserFemale,
 } from '@coreui/icons'
 
-import avatar1 from 'src/assets/images/avatars/1.jpg'
-import avatar2 from 'src/assets/images/avatars/2.jpg'
-import avatar3 from 'src/assets/images/avatars/3.jpg'
-import avatar4 from 'src/assets/images/avatars/4.jpg'
-import avatar5 from 'src/assets/images/avatars/5.jpg'
-import avatar6 from 'src/assets/images/avatars/6.jpg'
-
-import WidgetsBrand from '../widgets/WidgetsBrand'
-import WidgetsDropdown from '../widgets/WidgetsDropdown'
 import MainChart from './MainChart'
+import axios from 'axios';
 
 const Dashboard = () => {
+
+  const [assetsinv,setAssetsinv]=useState([])
+  const [dpt,setDpt]=useState([])
+
+  let   January=0
+  let   February=0
+  let   March=0
+  let   April=0
+  let   May=0
+  let   June=0
+  let   July=0
+  let   August=0
+  let    September=0
+  let   Octuber=0
+  let   November=0
+  let   December=0
+
+
+  let Vehicles=0
+  let Equipment=0
+  let Furniture=0
+
+
+  useEffect(()=>{
+    axios.get("http://localhost:5000/departments")
+    .then(response => setDpt(response.data))
+  },[])
+
+
+
+  useEffect(()=>{
+    axios.get("http://localhost:5000/inv0")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv1")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv2")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv3")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv4")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv5")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv6")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv7")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv8")    
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    
+  },[])
+
+
+  let cassets=0
+  let cdpt=0
+
+  for (let i=0;i<assetsinv.length;i++){
+      cassets=cassets+1
+
+      const partes = assetsinv[i].acquisition_date.split('-'); // partes[0]=dd, partes[1]=mm, partes[2]=yyyy
+      const mes = partes[1]; 
+      if (mes==="01"){
+        January=January+1
+      }
+      if(mes==="02"){
+        February=February+1
+      }
+      if(mes==="03"){
+        March=March+1
+      }
+      if(mes==="04"){
+        April=April+1
+      }
+      if(mes==="05"){
+        May=May+1
+      }
+      if(mes==="06"){
+        June=June+1
+      }
+      if(mes==="07"){
+        July=July+1
+      }
+      if(mes==="08"){
+        August=August+1
+      }
+      if(mes==="09"){
+        September=September+1
+      }
+      if(mes==="10"){
+        Octuber=Octuber+1
+      }
+      if(mes==="11"){
+        November=November+1
+      }
+      if(mes==="12"){
+        December=December+1
+      }
+
+      if(assetsinv[i].type==="vehicles"){
+        Vehicles=Vehicles+1
+      }
+      if(assetsinv[i].type==="equipment"){
+        Equipment=Equipment+1
+      }
+      if(assetsinv[i].type==="furniture"){
+        Furniture=Furniture+1
+      }
+  }
+
+  console.log(Vehicles)
+
+  for(let i=0;i<dpt.length;i++){
+    cdpt=cdpt+1
+  }
+
+
+
   const progressExample = [
     { title: 'Visits', value: '29.703 Users', percent: 40, color: 'success' },
     { title: 'Unique', value: '24.093 Users', percent: 20, color: 'info' },
@@ -76,8 +182,8 @@ const Data = {
   labels: ["Vehicles", "Equipment", "Furniture"],
   datasets: [
     {
-      data: [40, 60, 50],
-      backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56",],
+      data: [Vehicles, Equipment, Furniture],
+      backgrounedColor: ["#FF6384", "#36A2EB", "#FFCE56",],
       hoverBackgroundColor: ["#FF4384", "#3692EB", "#FFC856",],
     },
   ],
@@ -95,10 +201,12 @@ const Options = {
       {
         label: "Assets added in the year",
         backgroundColor: ["#FFCE56"],
-        data: [10,20,30,10,40,10,10,,5,10,,3], // Valores de las categorías
+        data: [January,February,March,April,May,June,July,August,September,Octuber,November,December], // Valores de las categorías
       },
     ],
   };
+
+
 
   const assetsR = [
     { id: 1, name: "Computer", status: "Average" },
@@ -126,7 +234,7 @@ const Options = {
                     <CCol >
                       <div className="border-start border-start-4 border-start-info py-1 px-3">
                         <div className="text-body-secondary text-truncate small">Assets</div>
-                        <div className="fs-5 fw-semibold">90</div>
+                        <div className="fs-5 fw-semibold">{cassets}</div>
                       </div>
                     </CCol>
                     <CCol >
@@ -140,7 +248,7 @@ const Options = {
                     <CCol >
                       <div className="border-start border-start-4 border-start-warning py-1 px-3 mb-3">
                         <div className="text-body-secondary text-truncate small">Departments</div>
-                        <div className="fs-5 fw-semibold">12</div>
+                        <div className="fs-5 fw-semibold">{cdpt}</div>
                       </div>
                     </CCol>
                   </CRow>
@@ -174,7 +282,7 @@ const Options = {
                       </CTableHead>
                       <CTableBody>      
                         {assetsR.map((ast) => (          
-                          <CTableRow>
+                          <CTableRow key={ast.id}>
                             <CTableDataCell>{ast.id}</CTableDataCell>
                             <CTableDataCell>{ast.name}</CTableDataCell>
                             <CTableDataCell>{ast.status}</CTableDataCell>
