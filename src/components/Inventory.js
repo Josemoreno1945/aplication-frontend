@@ -149,8 +149,8 @@ useEffect(() => {
 
 
 
-function EditItem (index){
-        setFormData(inventory[index]); // Carga los datos del elemento seleccionado en el formulario
+function EditItem (id){
+        setFormData(inventory[id]); // Carga los datos del elemento seleccionado en el formulario
         setIsEditing(true); // Cambia el estado a true para indicar que se está editando
         setItemId(index); // Guarda el índice del elemento que se está editando
         setOpenModal(true); // Abre el modal para editar
@@ -180,6 +180,7 @@ const handleInputChange = (e) => {
 
 
         if (isEditing === true) {
+        axios.put(`http://localhost:5000/inv${departmentId}/${itemId}`)
           const updatedInventory = [...inventory]; // Crea una copia del inventario
           updatedInventory[itemId] = formData; // Actualiza el elemento en la posición correspondiente
           setInventory(updatedInventory); // Actualiza el estado del inventario
@@ -599,7 +600,7 @@ const handleInputChange = (e) => {
                                     <CTableDataCell>{item.analyst}</CTableDataCell>
                                     <CTableDataCell>
                                         <CButton
-                                        onClick={() => EditItem(index)} 
+                                        onClick={() => EditItem(item.id)} 
                                         > <CIcon icon={cilPencil} /> </CButton>
                                     </CTableDataCell>
                                     <CTableDataCell>

@@ -82,7 +82,6 @@ const Departments = () => {
   const handleSubmit = () => {
 
     if (!formData.name || !formData.address || !formData.phone || !formData.email || !formData.operational_status) {
-      //verifica si los campos estan vacios , y si los estan manda un mensaje 
       alert('Please fill out all fields.')   
       return
     }
