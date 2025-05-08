@@ -1,5 +1,9 @@
-import React from 'react'
+import React, { use, useEffect, useState } from 'react'
 import classNames from 'classnames'
+import { CChartBar } from "@coreui/react-chartjs";
+import { CChartPie } from "@coreui/react-chartjs";
+
+
 
 import {
   CAvatar,
@@ -43,18 +47,127 @@ import {
   cilUserFemale,
 } from '@coreui/icons'
 
-import avatar1 from 'src/assets/images/avatars/1.jpg'
-import avatar2 from 'src/assets/images/avatars/2.jpg'
-import avatar3 from 'src/assets/images/avatars/3.jpg'
-import avatar4 from 'src/assets/images/avatars/4.jpg'
-import avatar5 from 'src/assets/images/avatars/5.jpg'
-import avatar6 from 'src/assets/images/avatars/6.jpg'
-
-import WidgetsBrand from '../widgets/WidgetsBrand'
-import WidgetsDropdown from '../widgets/WidgetsDropdown'
 import MainChart from './MainChart'
+import axios from 'axios';
 
 const Dashboard = () => {
+
+  const [assetsinv,setAssetsinv]=useState([])
+  const [dpt,setDpt]=useState([])
+
+  let   January=0
+  let   February=0
+  let   March=0
+  let   April=0
+  let   May=0
+  let   June=0
+  let   July=0
+  let   August=0
+  let    September=0
+  let   Octuber=0
+  let   November=0
+  let   December=0
+
+
+  let Vehicles=0
+  let Equipment=0
+  let Furniture=0
+
+
+  useEffect(()=>{
+    axios.get("http://localhost:5000/departments")
+    .then(response => setDpt(response.data))
+  },[])
+
+
+
+  useEffect(()=>{
+    axios.get("http://localhost:5000/inv0")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv1")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv2")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv3")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv4")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv5")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv6")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv7")
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    axios.get("http://localhost:5000/inv8")    
+    .then(response => setAssetsinv(prev => [...prev, ...response.data]))
+    
+  },[])
+
+
+  let cassets=0
+  let cdpt=0
+
+  for (let i=0;i<assetsinv.length;i++){
+      cassets=cassets+1
+
+      const partes = assetsinv[i].acquisition_date.split('-'); // partes[0]=dd, partes[1]=mm, partes[2]=yyyy
+      const mes = partes[1]; 
+      if (mes==="01"){
+        January=January+1
+      }
+      if(mes==="02"){
+        February=February+1
+      }
+      if(mes==="03"){
+        March=March+1
+      }
+      if(mes==="04"){
+        April=April+1
+      }
+      if(mes==="05"){
+        May=May+1
+      }
+      if(mes==="06"){
+        June=June+1
+      }
+      if(mes==="07"){
+        July=July+1
+      }
+      if(mes==="08"){
+        August=August+1
+      }
+      if(mes==="09"){
+        September=September+1
+      }
+      if(mes==="10"){
+        Octuber=Octuber+1
+      }
+      if(mes==="11"){
+        November=November+1
+      }
+      if(mes==="12"){
+        December=December+1
+      }
+
+      if(assetsinv[i].type==="vehicles"){
+        Vehicles=Vehicles+1
+      }
+      if(assetsinv[i].type==="equipment"){
+        Equipment=Equipment+1
+      }
+      if(assetsinv[i].type==="furniture"){
+        Furniture=Furniture+1
+      }
+  }
+
+  console.log(Vehicles)
+
+  for(let i=0;i<dpt.length;i++){
+    cdpt=cdpt+1
+  }
+
+
+
   const progressExample = [
     { title: 'Visits', value: '29.703 Users', percent: 40, color: 'success' },
     { title: 'Unique', value: '24.093 Users', percent: 20, color: 'info' },
@@ -63,122 +176,130 @@ const Dashboard = () => {
     { title: 'Bounce Rate', value: 'Average Rate', percent: 40.15, color: 'primary' },
   ]
 
-  const progressGroupExample1 = [
-    { title: 'Monday', value1: 34, value2: 78 },
-    { title: 'Tuesday', value1: 56, value2: 94 },
-    { title: 'Wednesday', value1: 12, value2: 67 },
-    { title: 'Thursday', value1: 43, value2: 91 },
-    { title: 'Friday', value1: 22, value2: 73 },
-    { title: 'Saturday', value1: 53, value2: 82 },
-    { title: 'Sunday', value1: 9, value2: 69 },
-  ]
+//........................................................................................
 
-  const progressGroupExample2 = [
-    { title: 'Male', icon: cilUser, value: 53 },
-    { title: 'Female', icon: cilUserFemale, value: 43 },
-  ]
+const Data = {
+  labels: ["Vehicles", "Equipment", "Furniture"],
+  datasets: [
+    {
+      data: [Vehicles, Equipment, Furniture],
+      backgrounedColor: ["#FF6384", "#36A2EB", "#FFCE56",],
+      hoverBackgroundColor: ["#FF4384", "#3692EB", "#FFC856",],
+    },
+  ],
+};
+const Options = {
+  responsive: true,
+  maintainAspectRatio: false,
+  
+};
 
-  const progressGroupExample3 = [
-    { title: 'Organic Search', icon: cibGoogle, percent: 56, value: '191,235' },
-    { title: 'Facebook', icon: cibFacebook, percent: 15, value: '51,223' },
-    { title: 'Twitter', icon: cibTwitter, percent: 11, value: '37,564' },
-    { title: 'LinkedIn', icon: cibLinkedin, percent: 8, value: '27,319' },
-  ]
 
-  const tableExample = [
-    {
-      avatar: { src: avatar1, status: 'success' },
-      user: {
-        name: 'Yiorgos Avraamu',
-        new: true,
-        registered: 'Jan 1, 2023',
+  const Assets = {
+    labels: ["January", "February", "March","April","May","June","July","August","September","Octuber","November","December"],
+    datasets: [
+      {
+        label: "Assets added in the year",
+        backgroundColor: ["#FFCE56"],
+        data: [January,February,March,April,May,June,July,August,September,Octuber,November,December], // Valores de las categorías
       },
-      country: { name: 'USA', flag: cifUs },
-      usage: {
-        value: 50,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'success',
-      },
-      payment: { name: 'Mastercard', icon: cibCcMastercard },
-      activity: '10 sec ago',
-    },
-    {
-      avatar: { src: avatar2, status: 'danger' },
-      user: {
-        name: 'Avram Tarasios',
-        new: false,
-        registered: 'Jan 1, 2023',
-      },
-      country: { name: 'Brazil', flag: cifBr },
-      usage: {
-        value: 22,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'info',
-      },
-      payment: { name: 'Visa', icon: cibCcVisa },
-      activity: '5 minutes ago',
-    },
-    {
-      avatar: { src: avatar3, status: 'warning' },
-      user: { name: 'Quintin Ed', new: true, registered: 'Jan 1, 2023' },
-      country: { name: 'India', flag: cifIn },
-      usage: {
-        value: 74,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'warning',
-      },
-      payment: { name: 'Stripe', icon: cibCcStripe },
-      activity: '1 hour ago',
-    },
-    {
-      avatar: { src: avatar4, status: 'secondary' },
-      user: { name: 'Enéas Kwadwo', new: true, registered: 'Jan 1, 2023' },
-      country: { name: 'France', flag: cifFr },
-      usage: {
-        value: 98,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'danger',
-      },
-      payment: { name: 'PayPal', icon: cibCcPaypal },
-      activity: 'Last month',
-    },
-    {
-      avatar: { src: avatar5, status: 'success' },
-      user: {
-        name: 'Agapetus Tadeáš',
-        new: true,
-        registered: 'Jan 1, 2023',
-      },
-      country: { name: 'Spain', flag: cifEs },
-      usage: {
-        value: 22,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'primary',
-      },
-      payment: { name: 'Google Wallet', icon: cibCcApplePay },
-      activity: 'Last week',
-    },
-    {
-      avatar: { src: avatar6, status: 'danger' },
-      user: {
-        name: 'Friderik Dávid',
-        new: true,
-        registered: 'Jan 1, 2023',
-      },
-      country: { name: 'Poland', flag: cifPl },
-      usage: {
-        value: 43,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'success',
-      },
-      payment: { name: 'Amex', icon: cibCcAmex },
-      activity: 'Last week',
-    },
-  ]
+    ],
+  };
+
+
+
+  const assetsR = [
+    { id: 1, name: "Computer", status: "Average" },
+    { id: 2, name: "Projector", status: "Optimal" },
+    { id: 3, name: "Desk", status: "Optimal" },
+    { id: 4, name: "Chair", status: "Optimal" },
+    { id: 5, name: "Printer", status: "Optimal" },
+  ];
+  
+  
+
+  
+
 
   return (
     <>
-      <WidgetsDropdown className="mb-4" />
+<CRow>
+        <CCol xs>
+          <CCard className="mb-4">
+            <CCardHeader>General Summary</CCardHeader>
+            <CCardBody>
+              <CRow>
+                <CCol >
+                  <CRow>
+                    <CCol >
+                      <div className="border-start border-start-4 border-start-info py-1 px-3">
+                        <div className="text-body-secondary text-truncate small">Assets</div>
+                        <div className="fs-5 fw-semibold">{cassets}</div>
+                      </div>
+                    </CCol>
+                    <CCol >
+                      <div className="border-start border-start-4 border-start-danger py-1 px-3 mb-3">
+                        <div className="text-body-secondary text-truncate small">
+                          Users
+                        </div>
+                        <div className="fs-5 fw-semibold">200</div>
+                      </div>
+                    </CCol>
+                    <CCol >
+                      <div className="border-start border-start-4 border-start-warning py-1 px-3 mb-3">
+                        <div className="text-body-secondary text-truncate small">Departments</div>
+                        <div className="fs-5 fw-semibold">{cdpt}</div>
+                      </div>
+                    </CCol>
+                  </CRow>
+
+                </CCol>
+              </CRow>
+
+            </CCardBody>
+          </CCard>
+        </CCol>
+      </CRow>
+
+
+
+      <CCard className='mb-4'>
+        <CCardHeader>Assets added</CCardHeader>
+        <CCardBody>
+        <CChartBar data={Assets} labels="assets" />
+
+
+
+          <div className="table-responsive">
+                    <CCardHeader>Recently added assets</CCardHeader>
+                    <CTable striped hover>      
+                      <CTableHead>
+                        <CTableRow>        
+                        <CTableHeaderCell>Id</CTableHeaderCell>
+                        <CTableHeaderCell>Name</CTableHeaderCell>
+                        <CTableHeaderCell>Status</CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+                      <CTableBody>      
+                        {assetsR.map((ast) => (          
+                          <CTableRow key={ast.id}>
+                            <CTableDataCell>{ast.id}</CTableDataCell>
+                            <CTableDataCell>{ast.name}</CTableDataCell>
+                            <CTableDataCell>{ast.status}</CTableDataCell>
+                          </CTableRow>
+                        ))}
+                      </CTableBody>
+                    </CTable>
+                    </div>
+        </CCardBody>
+      </CCard>
+
+
+
+
+
+
+
       <CCard className="mb-4">
         <CCardBody>
           <CRow>
@@ -186,7 +307,7 @@ const Dashboard = () => {
               <h4 id="traffic" className="card-title mb-0">
                 Traffic
               </h4>
-              <div className="small text-body-secondary">January - July 2023</div>
+              <div className="small text-body-secondary">January - April 2025</div>
             </CCol>
             <CCol sm={7} className="d-none d-md-block">
               <CButton color="primary" className="float-end">
@@ -233,153 +354,40 @@ const Dashboard = () => {
           </CRow>
         </CCardFooter>
       </CCard>
-      <WidgetsBrand className="mb-4" withCharts />
-      <CRow>
-        <CCol xs>
-          <CCard className="mb-4">
-            <CCardHeader>Traffic {' & '} Sales</CCardHeader>
-            <CCardBody>
-              <CRow>
-                <CCol xs={12} md={6} xl={6}>
-                  <CRow>
-                    <CCol xs={6}>
-                      <div className="border-start border-start-4 border-start-info py-1 px-3">
-                        <div className="text-body-secondary text-truncate small">New Clients</div>
-                        <div className="fs-5 fw-semibold">9,123</div>
-                      </div>
-                    </CCol>
-                    <CCol xs={6}>
-                      <div className="border-start border-start-4 border-start-danger py-1 px-3 mb-3">
-                        <div className="text-body-secondary text-truncate small">
-                          Recurring Clients
-                        </div>
-                        <div className="fs-5 fw-semibold">22,643</div>
-                      </div>
-                    </CCol>
-                  </CRow>
-                  <hr className="mt-0" />
-                  {progressGroupExample1.map((item, index) => (
-                    <div className="progress-group mb-4" key={index}>
-                      <div className="progress-group-prepend">
-                        <span className="text-body-secondary small">{item.title}</span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <CProgress thin color="info" value={item.value1} />
-                        <CProgress thin color="danger" value={item.value2} />
-                      </div>
-                    </div>
-                  ))}
-                </CCol>
-                <CCol xs={12} md={6} xl={6}>
-                  <CRow>
-                    <CCol xs={6}>
-                      <div className="border-start border-start-4 border-start-warning py-1 px-3 mb-3">
-                        <div className="text-body-secondary text-truncate small">Pageviews</div>
-                        <div className="fs-5 fw-semibold">78,623</div>
-                      </div>
-                    </CCol>
-                    <CCol xs={6}>
-                      <div className="border-start border-start-4 border-start-success py-1 px-3 mb-3">
-                        <div className="text-body-secondary text-truncate small">Organic</div>
-                        <div className="fs-5 fw-semibold">49,123</div>
-                      </div>
-                    </CCol>
-                  </CRow>
 
-                  <hr className="mt-0" />
 
-                  {progressGroupExample2.map((item, index) => (
-                    <div className="progress-group mb-4" key={index}>
-                      <div className="progress-group-header">
-                        <CIcon className="me-2" icon={item.icon} size="lg" />
-                        <span>{item.title}</span>
-                        <span className="ms-auto fw-semibold">{item.value}%</span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <CProgress thin color="warning" value={item.value} />
-                      </div>
-                    </div>
-                  ))}
 
-                  <div className="mb-5"></div>
 
-                  {progressGroupExample3.map((item, index) => (
-                    <div className="progress-group" key={index}>
-                      <div className="progress-group-header">
-                        <CIcon className="me-2" icon={item.icon} size="lg" />
-                        <span>{item.title}</span>
-                        <span className="ms-auto fw-semibold">
-                          {item.value}{' '}
-                          <span className="text-body-secondary small">({item.percent}%)</span>
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <CProgress thin color="success" value={item.percent} />
-                      </div>
-                    </div>
-                  ))}
-                </CCol>
-              </CRow>
 
-              <br />
 
-              <CTable align="middle" className="mb-0 border" hover responsive>
-                <CTableHead className="text-nowrap">
-                  <CTableRow>
-                    <CTableHeaderCell className="bg-body-tertiary text-center">
-                      <CIcon icon={cilPeople} />
-                    </CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary">User</CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary text-center">
-                      Country
-                    </CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary">Usage</CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary text-center">
-                      Payment Method
-                    </CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary">Activity</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {tableExample.map((item, index) => (
-                    <CTableRow v-for="item in tableItems" key={index}>
-                      <CTableDataCell className="text-center">
-                        <CAvatar size="md" src={item.avatar.src} status={item.avatar.status} />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div>{item.user.name}</div>
-                        <div className="small text-body-secondary text-nowrap">
-                          <span>{item.user.new ? 'New' : 'Recurring'}</span> | Registered:{' '}
-                          {item.user.registered}
-                        </div>
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        <CIcon size="xl" icon={item.country.flag} title={item.country.name} />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div className="d-flex justify-content-between text-nowrap">
-                          <div className="fw-semibold">{item.usage.value}%</div>
-                          <div className="ms-3">
-                            <small className="text-body-secondary">{item.usage.period}</small>
-                          </div>
-                        </div>
-                        <CProgress thin color={item.usage.color} value={item.usage.value} />
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        <CIcon size="xl" icon={item.payment.icon} />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div className="small text-body-secondary text-nowrap">Last login</div>
-                        <div className="fw-semibold text-nowrap">{item.activity}</div>
-                      </CTableDataCell>
-                    </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable>
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
+
+
+
+
+
+      <CCard className='mb-4'>
+        <CCardHeader>Assets Type</CCardHeader>
+
+   
+    <CChartPie data={Data} options={Options} />
+
+
+      </CCard>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </>
   )
 }
