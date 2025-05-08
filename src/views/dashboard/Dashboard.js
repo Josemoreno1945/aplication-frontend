@@ -52,6 +52,7 @@ import axios from 'axios';
 
 const Dashboard = () => {
 
+  const [users,setu]=useState([])
   const [assetsinv,setAssetsinv]=useState([])
   const [dpt,setDpt]=useState([])
 
@@ -79,7 +80,10 @@ const Dashboard = () => {
     .then(response => setDpt(response.data))
   },[])
 
-
+useEffect(()=>{
+  axios.get("http://localhost:5000/users")
+  .then(response => setu(response.data))
+})
 
   useEffect(()=>{
     axios.get("http://localhost:5000/inv0")
@@ -106,7 +110,7 @@ const Dashboard = () => {
 
   let cassets=0
   let cdpt=0
-
+  let contuser=0
   for (let i=0;i<assetsinv.length;i++){
       cassets=cassets+1
 
@@ -164,6 +168,10 @@ const Dashboard = () => {
 
   for(let i=0;i<dpt.length;i++){
     cdpt=cdpt+1
+  }
+
+  for(let i=0;i<users.length;i++){
+    contuser=contuser+1
   }
 
 
@@ -242,7 +250,7 @@ const Options = {
                         <div className="text-body-secondary text-truncate small">
                           Users
                         </div>
-                        <div className="fs-5 fw-semibold">200</div>
+                        <div className="fs-5 fw-semibold">{contuser}</div>
                       </div>
                     </CCol>
                     <CCol >
