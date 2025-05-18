@@ -6,6 +6,7 @@ const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 //----------------------------------------------------------------------------
 
+const users= React.lazy(() => import('src/views/management/Users/users.js'))
 
 const reports= React.lazy(() => import('./components/reports'))
 const Departments= React.lazy(() => import('src/views/management/departments/departments.js'))
@@ -105,6 +106,9 @@ const routes = [
   { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
   { path: '/widgets', name: 'Widgets', element: Widgets },
   //------------------------------------------------------------------------------
+
+  { path: 'management/Users/', name:'users', element: users , exact: true },
+
   { path: '/management/Departments', name: 'Departments', element: Departments , exact: true },
   { path: '/components/reports', name: 'reports', element: reports , exact: true },
 
