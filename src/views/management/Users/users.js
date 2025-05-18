@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState,useEffect} from 'react'
 import { CRow, CCol, CCard, CCardHeader, CCardBody,CButton,CModal,CModalBody,CModalHeader,CModalFooter,CForm, CFormInput, CFormLabel, CFormSelect,
     CTable,CTableHead,CTableRow,CTableHeaderCell,CTableBody,CTableDataCell} from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -9,6 +9,8 @@ import axios from 'axios';
 
 const Users = () => {
 
+    
+
     const [isEditing,setIsEditing] = useState(false)
     const [userid, setuserid] = useState(null)
     const [modalVisible, setModalVisible] = useState(false)
@@ -18,9 +20,13 @@ const Users = () => {
 
     useEffect(() => {
         axios.get("http://localhost:5000/users")
-          .then(response => setusers(response.data))
-          .catch(error => console.error("Error al obtener datos", error));
-      }, []);
+        .then(response => setusers(response.data))
+        .catch(error => console.error("Error al obtener datos", error));
+    }, []);
+
+
+
+
     
         const [search, setSearch] = useState("");
 
@@ -71,7 +77,6 @@ const Users = () => {
 
     return (
         <>
-
 
         <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
             <CModalHeader className="header_edit">Editing</CModalHeader>
@@ -221,4 +226,4 @@ const Users = () => {
     )
 }
 
-export default Users
+export default Users;

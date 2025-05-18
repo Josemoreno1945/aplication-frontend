@@ -9,7 +9,6 @@ import axios from 'axios';
 //-----------------------------------------------------------------------------------------------------
 
 
-
 const Departments = () => {
   
   const Navigate = useNavigate(); //esto es para redireccionar a otras paginas  
