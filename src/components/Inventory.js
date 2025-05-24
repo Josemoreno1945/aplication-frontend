@@ -3,11 +3,13 @@ import { CCard, CCardHeader, CCardBody, CFormInput, CTable, CTableHead, CTableRo
 import { useParams } from 'react-router-dom';
 import "src/scss/inventory.scss";
 import CIcon from '@coreui/icons-react'
-import { cilListNumbered, cilPlus,cilX,cilPencil,cibDropbox} from '@coreui/icons'
+import { cilListNumbered, cilPlus,cilX,cilPencil,cibDropbox,cilArrowCircleLeft} from '@coreui/icons'
 import axios from 'axios';
+import { Navigate, useNavigate } from 'react-router-dom'
 
 
 const Inventory = () => {
+    const Navigate = useNavigate();
 
 //los estados son como el nombre lo dice , puede considerarse banderas , es lo mas parecido que le veo 
 //tambien pueden ser arreglos 
@@ -255,37 +257,7 @@ const handleInputChange = (e) => {
 
     <div className="container">
         <div className="buttom-box">                  
-        <CButton className="buttom-add" onClick={()=>{
-            
-            setFormData({
-                id: "",
-                type: "",
-                classification: "",
-                description: "",
-                color: "",
-                brand: "",
-                model: "",
-                serial: "",
-                height: "",
-                width: "",
-                depth: "",
-                plate: "",
-                bodywork: "",
-                engine: "",
-                year_of_the_vehicule: "",
-                acquisition_value: "",
-                use_status: "",
-                conservation_status: "",
-                observation: "",
-                physical_location:"",
-                direction_dependency:"",
-                level:"",
-                analyst:"",
-                acquisition_date:""
-                });
-            setIsEditing(false)
-            setOpenModal(true)}} >Add<CIcon icon={cilPlus} className="buttom-icon" />
-        </CButton>
+       
         </div> 
         
         <CModal visible={openmodal} onClose={() =>setOpenModal(false)}>
@@ -534,11 +506,57 @@ const handleInputChange = (e) => {
         
         
         
-        
-        
-        
         <CCard className="m-5">
-            <CCardHeader>Inventory from department:{departmentId}</CCardHeader>
+            <CCardHeader className="card-header">
+                <div>
+                    Inventory from department:{departmentId}
+                </div>
+                
+                
+                <div>
+                    <CButton className="buttom-add" onClick={()=>{
+                setFormData({
+                    id: "",
+                    type: "",
+                    classification: "",
+                    description: "",
+                    color: "",
+                    brand: "",
+                    model: "",
+                    serial: "",
+                    height: "",
+                    width: "",
+                    depth: "",
+                    plate: "",
+                    bodywork: "",
+                    engine: "",
+                    year_of_the_vehicule: "",
+                    acquisition_value: "",
+                    use_status: "",
+                    conservation_status: "",
+                    observation: "",
+                    physical_location:"",
+                    direction_dependency:"",
+                    level:"",
+                    analyst:"",
+                    acquisition_date:""
+                    });
+                setIsEditing(false)
+                setOpenModal(true)}}><CIcon icon={cilPlus} className="buttom-icon" /> Add</CButton>
+
+                <CButton className="buttom-add"
+                onClick={()=>Navigate(`/management/Departments`)}
+                ><CIcon icon={cilArrowCircleLeft}className="buttom-icon"  /> Back</CButton>
+
+                </div>
+
+                
+                
+           
+                
+                
+                
+                </CCardHeader>
             <CCardBody>
                 
                 <div className="table-responsive">

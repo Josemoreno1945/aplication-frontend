@@ -3,7 +3,7 @@ import { CCard, CCardHeader, CCardBody,CButton,CModal,CModalBody,CModalHeader,CM
 CTable,CTableHead,CTableRow,CTableHeaderCell,CTableBody,CTableDataCell} from '@coreui/react'
 import 'src/scss/departments.scss'
 import CIcon from '@coreui/icons-react'
-import { cilListNumbered, cilPlus,cilX,cilPencil,cibDropbox,cilSearch} from '@coreui/icons'
+import { cilListNumbered, cilPlus,cilX,cilPencil,cibDropbox,cilSearch, cilXCircle,cilEnvelopeClosed,cilPhone} from '@coreui/icons'
 import { Navigate, useNavigate } from 'react-router-dom'
 import axios from 'axios';
 //-----------------------------------------------------------------------------------------------------
@@ -209,19 +209,7 @@ const Departments = () => {
     <div className='conteiner'>  {/* Un div para contener el cuadro del boton y la lista*/}
       <div className="c_button"> {/*contenedor del boton*/}
         <CCardBody>
-          <CButton className="button-add" onClick={() => {
-          setFormData({
-            name: '',                  //aqui hacemos q al darle click al add , siempre el formulario este vacio 
-            address: '',
-            phone: '',
-            email: '',
-            operational_status: '',
-          });
-          setModalVisible(true); //modal lo hacemos visible 
-          setIsEditing(false);  //y verificamos q no se esta editando , q es solo add pues 
-          }}  
-          
-          >Add <CIcon icon={cilPlus} /> </CButton> {/*cada q se da un click se abre el modal*/}
+
           <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>  {/*cada que se da un click se cierra el modal*/} 
             <CModalHeader className='Modal-header'>Add New Department</CModalHeader>
             <CModalBody className='Modal-body'>
@@ -297,22 +285,51 @@ const Departments = () => {
     {/*esta tabla almacena los departamentos guardados*/}
 
       <CCard className="c_list"> {/*contenedor de la lista*/}
-        <CCardHeader>Management Departments</CCardHeader> 
+        <CCardHeader className='card-header'>
+          
+        
+
+        <div>
+          Management Departments
+        </div>
+        
+        
+        <div>
+            <CButton className="button-add" onClick={() => {
+            setFormData({
+              name: '',           
+              address: '',
+              phone: '',
+              email: '',
+              operational_status: '',
+            });
+            setModalVisible(true); //modal lo hacemos visible 
+            setIsEditing(false);  //y verificamos q no se esta editando , q es solo add pues 
+            }}  
+            >Add <CIcon icon={cilPlus} /> </CButton> 
+        </div>
+        
+        
+        
+        
+        
+        
+        </CCardHeader> 
         <CCardBody>
           <div  className="table-responsive">
           <CTable striped hover>     
             {/*tabla con los departamentos*/}
-            <CTableHead>
-              <CTableRow>  
+            <CTableHead >
+              <CTableRow >  
               <CTableHeaderCell><CIcon icon={cilListNumbered}/> </CTableHeaderCell>
               <CTableHeaderCell>Name</CTableHeaderCell>
               <CTableHeaderCell>Address</CTableHeaderCell>
               <CTableHeaderCell>Phone</CTableHeaderCell>
               <CTableHeaderCell>Email</CTableHeaderCell>
               <CTableHeaderCell>Status</CTableHeaderCell>
-              <CTableHeaderCell></CTableHeaderCell>
-              <CTableHeaderCell></CTableHeaderCell>
-              <CTableHeaderCell></CTableHeaderCell>
+              <CTableHeaderCell>inventory</CTableHeaderCell>
+              <CTableHeaderCell>Edit</CTableHeaderCell>
+              <CTableHeaderCell>Delete</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>      
@@ -320,23 +337,23 @@ const Departments = () => {
               {/*el index , esta vaina es como un ciclo recorriendo un vector , department es el vector en cuestion y key es como un id , indentificador*/}
               {filteredDepartment.map((department, index) => (          
                 <CTableRow key={index}>
-                  <CTableDataCell>{index + 1}</CTableDataCell>
-                  <CTableDataCell>{department.name}</CTableDataCell>
-                  <CTableDataCell>{department.address}</CTableDataCell>
-                  <CTableDataCell>{department.phone}</CTableDataCell>
-                  <CTableDataCell>{department.email}</CTableDataCell>
-                  <CTableDataCell>{department.operational_status}</CTableDataCell>
+                  <CTableDataCell >{index + 1}</CTableDataCell>
+                  <CTableDataCell >{department.name}</CTableDataCell>
+                  <CTableDataCell >{department.address}</CTableDataCell>
+                  <CTableDataCell >{department.phone}</CTableDataCell>
+                  <CTableDataCell >{department.email}</CTableDataCell>
+                  <CTableDataCell >{department.operational_status}</CTableDataCell>
                   <CTableDataCell>
                     <CButton
                     className='button-inventory'
-                    onClick={() => Navigate(`/inventory/${index}`)}  
-                    > <CIcon icon={cibDropbox} /> </CButton>
+                    onClick={() => Navigate(`/management/Departments/inventory/${index}`)}  
+                    > <CIcon icon={cibDropbox} className='text-success'/> </CButton>
                   </CTableDataCell>
                   <CTableDataCell>
                     <CButton
                     className='button-edit'
                     onClick={() => Editregister(index)} 
-                    > <CIcon icon={cilPencil} /> </CButton>
+                    > <CIcon icon={cilPencil} className='text-info' /> </CButton>
                   </CTableDataCell>
                   <CTableDataCell>
                     <CButton 
@@ -346,7 +363,7 @@ const Departments = () => {
                       setDeleteDptid(department.id) //aqui guarda el id del dpt seleccionado (se usa department si s , pq abajo donde se recorre el vector esta asi)
                       setMvisible(true)}
                     }>
-                    <CIcon icon={cilX} /> </CButton>
+                    <CIcon icon={cilXCircle}   className="text-danger" />  </CButton>
                   </CTableDataCell>
                 </CTableRow>
               ))}
