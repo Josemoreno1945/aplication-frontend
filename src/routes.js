@@ -1,6 +1,3 @@
-import { cilReportSlash } from '@coreui/icons'
-import { element } from 'prop-types'
-import react from 'react'
 import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
