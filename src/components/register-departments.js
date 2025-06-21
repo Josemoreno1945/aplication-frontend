@@ -54,6 +54,8 @@ const register_dpt = () => {
   //arreglo que almacena los departamentos
   const [departments, setDepartments] = useState([])
   const [departmentId, setDepartmentId] = useState(null)
+  const [errorModalVisible, setErrorModalVisible] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const InputChangedata = (e) => {
     //e es como un parametro
@@ -81,6 +83,11 @@ const register_dpt = () => {
           },
         })
         .then((response) => setDepartments(response.data))
+        .catch((err) => {
+          const msg = err.response.data.errors[0].message
+          setErrorMessage(msg)
+          setErrorModalVisible(true)
+        })
     } catch (err) {
       console.error('Error al registrar departamento:', err)
     }
@@ -88,6 +95,20 @@ const register_dpt = () => {
 
   return (
     <>
+      <CModal visible={errorModalVisible} onClose={() => setErrorModalVisible(false)}>
+        <CModalHeader>Error</CModalHeader>
+        <CModalBody>
+          <div>{errorMessage}</div>
+        </CModalBody>
+        <CModalFooter>
+          <div className="button-box">
+            <CButton className="button-register" onClick={() => setErrorModalVisible(false)}>
+              Cerrar
+            </CButton>
+          </div>
+        </CModalFooter>
+      </CModal>
+
       <div className="ccard-box mb-4">
         <CCard>
           <CCardHeader>Add New Department</CCardHeader>
