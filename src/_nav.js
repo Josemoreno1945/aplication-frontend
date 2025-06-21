@@ -24,13 +24,8 @@ const _nav = [
     name: 'Dashboard',
     to: '/dashboard',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    badge: {
-
-    },
+    badge: {},
   },
-
-
-
 
   {
     component: CNavTitle,
@@ -41,8 +36,13 @@ const _nav = [
     component: CNavGroup,
     name: 'Departments',
     to: '/buttons',
-    icon:  <CIcon icon={cilHouse} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilHouse} customClassName="nav-icon" />,
     items: [
+      {
+        component: CNavItem,
+        name: 'Register',
+        to: '/components/register_dpt',
+      },
       {
         component: CNavItem,
         name: 'List',
@@ -50,9 +50,6 @@ const _nav = [
       },
     ],
   },
-
-
-  
 
   /*
 
@@ -74,7 +71,7 @@ const _nav = [
     component: CNavItem,
     name: 'Reports',
     to: '/components/reports',
-    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />
+    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
   },
 
   /*
