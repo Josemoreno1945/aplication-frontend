@@ -50,8 +50,6 @@ const App = () => {
       >
         <Routes>
           
-        
-          <Route path="/inventory/:departmentId" element={<Inventory />} /> {/*ruta a inventario agg , y agarra desde el id del dpto , ne puede servir despues en backend*/}
           <Route exact path="/login" name="Login Page" element={<Login />} />
           <Route exact path="/register" name="Register Page" element={<Register />} />
           <Route exact path="/404" name="Page 404" element={<Page404 />} />
