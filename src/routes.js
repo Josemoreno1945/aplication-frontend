@@ -10,6 +10,7 @@ const Typography = React.lazy(() => import('./views/theme/typography/Typography'
 
 const users = React.lazy(() => import('src/views/management/Users/users.js'))
 const reports = React.lazy(() => import('./components/reports'))
+
 const Departments = React.lazy(() => import('src/views/management/departments/departments.js'))
 
 const Inventory = React.lazy(() => import('./components/Inventory.js'))
