@@ -18,6 +18,10 @@ import {
   CTableHeaderCell,
   CTableBody,
   CTableDataCell,
+  CFormTextarea,
+  CInputGroup,
+  CCardFooter,
+  CInputGroupText,
 } from '@coreui/react'
 import 'src/scss/departments.scss'
 import CIcon from '@coreui/icons-react'
@@ -31,27 +35,24 @@ import {
   cilXCircle,
   cilEnvelopeClosed,
   cilPhone,
+  cilOptions,
+  cilMap,
 } from '@coreui/icons'
 import { Navigate, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 //-----------------------------------------------------------------------------------------------------
 
 const Departments = () => {
-  const Navigate = useNavigate() //esto es para redireccionar a otras paginas
-
-  //estado para editar
-  const [isEditing, setIsEditing] = useState(false) //inicia en falso ....esto son como banderas xd , programar god
-
-  //variable que guarda el id del departamento a editar
-  const [departmentId, setDepartmentId] = useState(null) //en null pq no hay nada , solo se llena cuando se edita
-
-  //arreglo que almacena los departamentos
+  const Navigate = useNavigate()
+  const [search, setSearch] = useState('')
+  const [mvisible, setMvisible] = useState(false)
   const [departments, setDepartments] = useState([])
+  const [editmodalVisible, seteditModalVisible] = useState(false)
+  const [codigoEditar, setCodigoEditar] = useState(null)
 
-  //estado para la visibilidad del modal de add xd
-  const [modalVisible, setModalVisible] = useState(false)
+  const [errorModalVisible, setErrorModalVisible] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
-  //almacena los datos del formulario , cuando llenamos el formulario
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -60,9 +61,14 @@ const Departments = () => {
     operational_status: '',
   })
 
-  //-------------------------------------------------------------------------------------------
-  const [deleteDptid, setDeleteDptid] = useState('') //guarda el id del dpt a eliminar (se podra usar lo mismo de editar?????)(se puede pero mas enredado)
+  const InputChangedata = (e) => {
+    //e es como un parametro
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value }) //deja todos los valores de formdata pero dejando el nuevo valor , osea por eso el name , eso variaria , puede ser name , addres etc
+  }
 
+  //-------------------------------------------------------------------------------------------
+  /*
   //funcion para eliminar un registro de la tabla de departamentos
   const Delete = (id) => {
     const updatedDepartments = departments.filter((department) => department.id !== id) //comparamos el id seleccionado con los del vector , y si son iguales lo descarta, ahora estaria entre comillas eliminado el que seleccione
@@ -73,16 +79,8 @@ const Departments = () => {
       .then(() => console.log(`Departamento con ID ${id} eliminado`))
       .catch((error) => console.error('Error al eliminar departamento:', error))
   }
+*/
 
-  //ahora una funcion para editar un registro
-
-  const Editregister = (index) => {
-    const departmentToEdit = departments[index]
-    setFormData(departmentToEdit) //accedo al departamento elegido
-    setIsEditing(true) //cambio el estado a true para editar
-    setDepartmentId(departmentToEdit.id) //guarda el id del dpt
-    setModalVisible(true) //muestra el modal o mejor dicho el formulario
-  }
   /*
   // al presionar el boton save , este envia o guarda los datos -----------------------------------------------
   const handleSubmit = () => {
@@ -142,9 +140,6 @@ const Departments = () => {
 */
   //--------------------------------------------------------------------------------------------
 
-  const [search, setSearch] = useState('') //verctor donde guarda las busquedas
-  //al buscar , lo que escribo se guarda aqui
-
   let filteredDepartment = [] //let para que pueda cambiar los valores , aqui inicializo un vector vacio
 
   if (search === '') {
@@ -162,8 +157,6 @@ const Departments = () => {
     )
   }
 
-  const [mvisible, setMvisible] = useState(false)
-
   useEffect(() => {
     const token = localStorage.getItem('token')
     axios
@@ -176,8 +169,69 @@ const Departments = () => {
       .catch((error) => console.error('Error al obtener datos', error))
   }, [])
 
+  const getDepartments = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      axios
+        .get('http://localhost:4000/departments', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => setDepartments(response.data))
+    } catch {
+      console.error('Error al obtener datos', error)
+    }
+  }
+
+  //ahora una funcion para editar un registro
+
+  const putDepartments = async (id_departments) => {
+    try {
+      const token = localStorage.getItem('token')
+      console.log(id_departments)
+      await axios.put(`http://localhost:4000/departments/${id_departments}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      seteditModalVisible(false)
+      getDepartments()
+    } catch (err) {
+      console.error('Error al obtener datos', err)
+      let msg
+      if (
+        err.response &&
+        err.response.data &&
+        Array.isArray(err.response.data.errors) &&
+        err.response.data.errors.length > 0
+      ) {
+        msg = err.response.data.errors[0].message
+      } else if (err.response && err.response.data && err.response.data.error) {
+        msg = err.response.data.error
+      }
+      setErrorMessage(msg)
+      setErrorModalVisible(true)
+    }
+  }
+
   return (
     <>
+      <CModal visible={errorModalVisible} onClose={() => setErrorModalVisible(false)}>
+        <CModalHeader>Error</CModalHeader>
+        <CModalBody>
+          <div>{errorMessage}</div>
+        </CModalBody>
+        <CModalFooter>
+          <div className="button-box">
+            <CButton className="button-register" onClick={() => setErrorModalVisible(false)}>
+              Cerrar
+            </CButton>
+          </div>
+        </CModalFooter>
+      </CModal>
+
       {/*------------------------------------------------------------------------------------- */}
       <div className="buscador">
         <CForm className="d-flex">
@@ -211,20 +265,140 @@ const Departments = () => {
         </CModalBody>
       </CModal>
 
+      <CModal
+        visible={editmodalVisible}
+        onClose={() => {
+          seteditModalVisible(false)
+        }}
+      >
+        <div className="ccard-box mb-4">
+          <CCard>
+            <CCardHeader>Add New Department</CCardHeader>
+            <CCardBody>
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Department Name:</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Department Name"
+                        value={formData.name}
+                        onChange={InputChangedata}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Email:</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilEnvelopeClosed} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={InputChangedata}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Phone</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPhone} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="Phone number"
+                        value={formData.phone}
+                        onChange={InputChangedata}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Operational status:</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilOptions} />
+                      </CInputGroupText>
+                      <CFormSelect
+                        id="operational_status"
+                        name="operational_status"
+                        value={formData.operational_status}
+                        onChange={InputChangedata}
+                      >
+                        <option value="">Select status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                      </CFormSelect>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-100">
+                    <CFormLabel>Address:</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilMap} />
+                      </CInputGroupText>
+                      <CFormTextarea
+                        rows={3}
+                        type="text"
+                        id="address"
+                        name="address"
+                        placeholder="Address"
+                        value={formData.address}
+                        onChange={InputChangedata}
+                      ></CFormTextarea>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+            </CCardBody>
+            <CCardFooter>
+              <div className="button-box">
+                <CButton
+                  className="button-register"
+                  onClick={() => {
+                    putDepartments(codigoEditar)
+                  }}
+                >
+                  Editar
+                </CButton>
+              </div>
+            </CCardFooter>
+          </CCard>
+        </div>
+      </CModal>
+
       {/*------------------------------------------------------------------------------------- */}
       <div className="conteiner mb-4">
-        {/*creo otro Ccard que contendra una tabla */}
-        {/*esta tabla almacena los departamentos guardados*/}
         <CCard className="c_list">
           {' '}
-          {/*contenedor de la lista*/}
           <CCardHeader className="card-header">
             <div>Management Departments</div>
           </CCardHeader>
           <CCardBody>
             <div className="table-responsive">
               <CTable striped hover>
-                {/*tabla con los departamentos*/}
                 <CTableHead>
                   <CTableRow>
                     <CTableHeaderCell>
@@ -252,8 +426,9 @@ const Departments = () => {
                       <CTableDataCell>{department.email}</CTableDataCell>
                       <CTableDataCell>{department.operational_status}</CTableDataCell>
                       <CTableDataCell>
+                        {' '}
                         <CButton
-                          className="button-inventory"
+                          className="button-inventory  box-icon"
                           onClick={() => Navigate(`/management/Departments/inventory/${index}`)}
                         >
                           {' '}
@@ -261,16 +436,28 @@ const Departments = () => {
                         </CButton>
                       </CTableDataCell>
                       <CTableDataCell>
-                        <CButton className="button-edit" onClick={() => Editregister(index)}>
+                        <CButton
+                          className="button-edit box-icon"
+                          onClick={() => {
+                            setCodigoEditar(department.id_departments)
+                            setFormData({
+                              name: department.name,
+                              address: department.address,
+                              phone: department.phone,
+                              email: department.email,
+                              operational_status: department.operational_status,
+                            })
+                            seteditModalVisible(true)
+                          }}
+                        >
                           {' '}
                           <CIcon icon={cilPencil} className="text-info" />{' '}
                         </CButton>
                       </CTableDataCell>
                       <CTableDataCell>
                         <CButton
-                          className="button-delete"
+                          className="button-delete  box-icon"
                           onClick={() => {
-                            setDeleteDptid(department.id) //aqui guarda el id del dpt seleccionado (se usa department si s , pq abajo donde se recorre el vector esta asi)
                             setMvisible(true)
                           }}
                         >

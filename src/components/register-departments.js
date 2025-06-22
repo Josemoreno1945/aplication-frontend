@@ -84,7 +84,17 @@ const register_dpt = () => {
         })
         .then((response) => setDepartments(response.data))
         .catch((err) => {
-          const msg = err.response.data.errors[0].message
+          let msg
+          if (
+            err.response &&
+            err.response.data &&
+            Array.isArray(err.response.data.errors) &&
+            err.response.data.errors.length > 0
+          ) {
+            msg = err.response.data.errors[0].message
+          } else if (err.response && err.response.data && err.response.data.error) {
+            msg = err.response.data.error
+          }
           setErrorMessage(msg)
           setErrorModalVisible(true)
         })
@@ -158,16 +168,14 @@ const register_dpt = () => {
                     <CInputGroupText>
                       <CIcon icon={cilPhone} />
                     </CInputGroupText>
-                    <div className="flex-grow-1">
-                      <CFormInput
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        placeholder="Phone number"
-                        value={formData.phone}
-                        onChange={InputChangedata}
-                      ></CFormInput>
-                    </div>
+                    <CFormInput
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      placeholder="Phone number"
+                      value={formData.phone}
+                      onChange={InputChangedata}
+                    ></CFormInput>
                   </CInputGroup>
                 </div>
                 <div className="w-50">
