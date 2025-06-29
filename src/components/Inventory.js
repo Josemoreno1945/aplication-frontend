@@ -92,77 +92,22 @@ const Inventory = () => {
   const [mvisible, setMvisible] = useState(false)
 
   useEffect(() => {
-    if (departmentId === '0') {
-      axios
-        .get('http://localhost:5000/inv0')
-        .then((response) => setInventory(response.data))
-        .catch((error) => console.error('Error al obtener datos', error))
+    const fetchInventory = async () => {
+      const token = localStorage.getItem('token')
+      try {
+        const response = await axios.get(`http://localhost:4000/inv${departmentId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Agrega el token en la cabecera
+          },
+        })
+        setInventory(response.data)
+      } catch (error) {
+        console.error(`No se encontró el inventario del departamento ${departmentId}`, error)
+      }
     }
-    if (departmentId === '1') {
-      axios
-        .get('http://localhost:5000/inv1')
-        .then((response) => setInventory(response.data))
-        .catch((error) => console.error('Error al obtener datos', error))
-    }
-    if (departmentId === '2') {
-      axios
-        .get('http://localhost:5000/inv2')
-        .then((response) => setInventory(response.data))
-        .catch((error) => console.error('Error al obtener datos', error))
-    }
-    if (departmentId === '3') {
-      axios
-        .get('http://localhost:5000/inv3')
-        .then((response) => setInventory(response.data))
-        .catch((error) => console.error('Error al obtener datos', error))
-    }
-    if (departmentId === '4') {
-      axios
-        .get('http://localhost:5000/inv4')
-        .then((response) => setInventory(response.data))
-        .catch((error) => console.error('Error al obtener datos', error))
-    }
-    if (departmentId === '5') {
-      axios
-        .get('http://localhost:5000/inv5')
-        .then((response) => setInventory(response.data))
-        .catch((error) => console.error('Error al obtener datos', error))
-    }
-    if (departmentId === '6') {
-      axios
-        .get('http://localhost:5000/inv6')
-        .then((response) => setInventory(response.data))
-        .catch((error) => console.error('Error al obtener datos', error))
-    }
-    if (departmentId === '7') {
-      axios
-        .get('http://localhost:5000/inv7')
-        .then((response) => setInventory(response.data))
-        .catch((error) => console.error('Error al obtener datos', error))
-    }
-    if (departmentId === '8') {
-      axios
-        .get('http://localhost:5000/inv8')
-        .then((response) => setInventory(response.data))
-        .catch((error) => console.error('Error al obtener datos', error))
-    }
-    if (departmentId === '9') {
-      axios
-        .get('http://localhost:5000/inv9')
-        .then((response) => setInventory(response.data))
-        .catch((error) => console.error('Error al obtener datos', error))
-    }
-    if (departmentId === '10') {
-      axios
-        .get('http://localhost:5000/inv10')
-        .then((response) => setInventory(response.data))
-        .catch((error) => console.error('Error al obtener datos', error))
-    }
-    if (departmentId === '11') {
-      axios
-        .get('http://localhost:5000/inv11')
-        .then((response) => setInventory(response.data))
-        .catch((error) => console.error('Error al obtener datos', error))
+
+    if (departmentId !== null && departmentId !== undefined) {
+      fetchInventory()
     }
   }, [departmentId])
 

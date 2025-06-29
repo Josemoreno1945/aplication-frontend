@@ -40,6 +40,7 @@ import {
 } from '@coreui/icons'
 import { Navigate, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+
 //-----------------------------------------------------------------------------------------------------
 
 const Departments = () => {
@@ -49,9 +50,13 @@ const Departments = () => {
   const [departments, setDepartments] = useState([])
   const [editmodalVisible, seteditModalVisible] = useState(false)
   const [codigoEditar, setCodigoEditar] = useState(null)
+  const [deleteDptid, SetdeleteDptid] = useState(null)
 
   const [errorModalVisible, setErrorModalVisible] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+
+  const [messageDelete, setmessageDelete] = useState('')
+  const [msgDeleteModal, setmsgDeleteModal] = useState(false)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -70,15 +75,7 @@ const Departments = () => {
   //-------------------------------------------------------------------------------------------
   /*
   //funcion para eliminar un registro de la tabla de departamentos
-  const Delete = (id) => {
-    const updatedDepartments = departments.filter((department) => department.id !== id) //comparamos el id seleccionado con los del vector , y si son iguales lo descarta, ahora estaria entre comillas eliminado el que seleccione
-    setDepartments(updatedDepartments)
-    setMvisible(false)
-    axios
-      .delete(`http://localhost:5000/departments/${id}`) //esas comillas si o si xd
-      .then(() => console.log(`Departamento con ID ${id} eliminado`))
-      .catch((error) => console.error('Error al eliminar departamento:', error))
-  }
+
 */
 
   /*
@@ -172,7 +169,7 @@ const Departments = () => {
   const getDepartments = async () => {
     try {
       const token = localStorage.getItem('token')
-      axios
+      await axios
         .get('http://localhost:4000/departments', {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -184,40 +181,41 @@ const Departments = () => {
     }
   }
 
-  //ahora una funcion para editar un registro
-
-  const putDepartments = async (id_departments) => {
+  const Delete = async (id) => {
     try {
       const token = localStorage.getItem('token')
-      console.log(id_departments)
-      await axios.put(`http://localhost:4000/departments/${id_departments}`, formData, {
+      const response = await axios.delete(`http://localhost:4000/departments/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       })
-      seteditModalVisible(false)
       getDepartments()
+      setMvisible(false)
+      setmsgDeleteModal(true)
+      setmessageDelete(response.data.message)
+      console.log(msg)
     } catch (err) {
-      console.error('Error al obtener datos', err)
-      let msg
-      if (
-        err.response &&
-        err.response.data &&
-        Array.isArray(err.response.data.errors) &&
-        err.response.data.errors.length > 0
-      ) {
-        msg = err.response.data.errors[0].message
-      } else if (err.response && err.response.data && err.response.data.error) {
-        msg = err.response.data.error
-      }
-      setErrorMessage(msg)
-      setErrorModalVisible(true)
+      console.log('Error al eliminar departamento:', err)
     }
+    setMvisible(false)
   }
 
   return (
     <>
+      <CModal visible={msgDeleteModal} onClose={() => setmsgDeleteModal(false)}>
+        <CModalBody>
+          <div>{String(messageDelete)}</div>
+        </CModalBody>
+        <CModalFooter>
+          <div className="button-box">
+            <CButton className="button-register" onClick={() => setmsgDeleteModal(false)}>
+              Cerrar
+            </CButton>
+          </div>
+        </CModalFooter>
+      </CModal>
+
       <CModal visible={errorModalVisible} onClose={() => setErrorModalVisible(false)}>
         <CModalHeader>Error</CModalHeader>
         <CModalBody>
@@ -429,7 +427,11 @@ const Departments = () => {
                         {' '}
                         <CButton
                           className="button-inventory  box-icon"
-                          onClick={() => Navigate(`/management/Departments/inventory/${index}`)}
+                          onClick={() =>
+                            Navigate(
+                              `/management/Departments/inventory/${department.id_departments}`,
+                            )
+                          }
                         >
                           {' '}
                           <CIcon icon={cibDropbox} className="text-success" />{' '}
@@ -459,6 +461,7 @@ const Departments = () => {
                           className="button-delete  box-icon"
                           onClick={() => {
                             setMvisible(true)
+                            SetdeleteDptid(department.id_departments)
                           }}
                         >
                           <CIcon icon={cilXCircle} className="text-danger" />{' '}
