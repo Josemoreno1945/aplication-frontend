@@ -45,7 +45,7 @@ import axios from 'axios'
 
 const Departments = () => {
   const Navigate = useNavigate()
-  const [search, setSearch] = useState('')
+
   const [mvisible, setMvisible] = useState(false)
   const [departments, setDepartments] = useState([])
   const [editmodalVisible, seteditModalVisible] = useState(false)
@@ -55,8 +55,10 @@ const Departments = () => {
   const [errorModalVisible, setErrorModalVisible] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
+  const [messageEdit, setmessageEdit] = useState('')
   const [messageDelete, setmessageDelete] = useState('')
   const [msgDeleteModal, setmsgDeleteModal] = useState(false)
+  const [msgEditModal, setmsgEditModal] = useState(false)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -67,76 +69,12 @@ const Departments = () => {
   })
 
   const InputChangedata = (e) => {
-    //e es como un parametro
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value }) //deja todos los valores de formdata pero dejando el nuevo valor , osea por eso el name , eso variaria , puede ser name , addres etc
   }
 
-  //-------------------------------------------------------------------------------------------
-  /*
-  //funcion para eliminar un registro de la tabla de departamentos
-
-*/
-
-  /*
-  // al presionar el boton save , este envia o guarda los datos -----------------------------------------------
-  const handleSubmit = () => {
-    if (
-      !formData.name ||
-      !formData.address ||
-      !formData.phone ||
-      !formData.email ||
-      !formData.operational_status
-    ) {
-      alert('Please fill out all fields.')
-      return
-    }
-    {
-    }
-    if (!formData.email.includes('@') || !formData.email.includes('.com')) {
-      alert('Please enter a valid email address.')
-      return
-    }
-
-    //---------------------------------------------------------------------------------------------------
-    //envia los datos del formulario al json , asi que hay un post , pero tambien un get para que automaticamente me muestre los datos
-
-    axios
-      .post('http://localhost:5000/departments', formData)
-      .then(() => axios.get('http://localhost:5000/departments'))
-      .then((response) => {
-        setDepartments(response.data)
-      })
-      .catch((error) => console.error('Error al agregar departamento:', error))
-
-    //-------------------------------------------------------------------
-    //ahora in if , solo es cuando se esta editando , esto lo sabemos con banderas . cuando isediting sea true entra
-    if (isEditing === true) {
-      axios.put(`http://localhost:5000/departments/${departmentId}`, formData).then(() => {
-        const updatedDepartments = [...departments] //mete los departamentos a un nuevo arreglo
-        const index = updatedDepartments.findIndex((department) => department.id === departmentId)
-        if (index !== -1) {
-          updatedDepartments[index] = formData
-          setDepartments(updatedDepartments) // Actualiza el estado con los departamentos editados
-        }
-        setIsEditing(false) //cambia la bandera a false
-        setDepartmentId(null) //limpia la variable de id
-      })
-    }
-
-    setFormData({
-      //limpia el formulario
-      name: '',
-      address: '',
-      phone: '',
-      email: '',
-      operational_status: '',
-    })
-    setModalVisible(false)
-  }
-*/
   //--------------------------------------------------------------------------------------------
-
+  /*
   let filteredDepartment = [] //let para que pueda cambiar los valores , aqui inicializo un vector vacio
 
   if (search === '') {
@@ -153,19 +91,22 @@ const Departments = () => {
         dpt.operational_status.toLowerCase().includes(search.toLowerCase()),
     )
   }
+*/
 
+  //GET PARA DEPARTAMENTOS --------------------------------------------------------------------------------
   useEffect(() => {
     const token = localStorage.getItem('token')
     axios
       .get('http://localhost:4000/departments', {
         headers: {
-          Authorization: `Bearer ${token}`, // Agrega el token en la cabecera
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => setDepartments(response.data))
       .catch((error) => console.error('Error al obtener datos', error))
   }, [])
 
+  //GET DE DEPARTAMENTOS COMO FUNCION ----------------------------------------------------------------------
   const getDepartments = async () => {
     try {
       const token = localStorage.getItem('token')
@@ -181,6 +122,8 @@ const Departments = () => {
     }
   }
 
+  //DELETE DE DEPARTAMENTOS -----------------------------------------------------------------------------------
+
   const Delete = async (id) => {
     try {
       const token = localStorage.getItem('token')
@@ -194,11 +137,31 @@ const Departments = () => {
       setMvisible(false)
       setmsgDeleteModal(true)
       setmessageDelete(response.data.message)
-      console.log(msg)
     } catch (err) {
       console.log('Error al eliminar departamento:', err)
     }
-    setMvisible(false)
+  }
+
+  //PUT DE DEPARTAMENTOS --------------------------------------------------------------------------------
+
+  const putDepartments = async (id) => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.put(`http://localhost:4000/departments/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      getDepartments()
+      seteditModalVisible(false)
+      setmsgEditModal(true)
+      setmessageEdit(response.data.message)
+    } catch (err) {
+      setErrorMessage(err.response.data.error)
+      setErrorModalVisible(true)
+      seteditModalVisible(false)
+    }
   }
 
   return (
@@ -216,10 +179,23 @@ const Departments = () => {
         </CModalFooter>
       </CModal>
 
+      <CModal visible={msgEditModal} onClose={() => setmsgEditModal(false)}>
+        <CModalBody>
+          <div>{String(messageEdit)}</div>
+        </CModalBody>
+        <CModalFooter>
+          <div className="button-box">
+            <CButton className="button-register" onClick={() => setmsgEditModal(false)}>
+              Cerrar
+            </CButton>
+          </div>
+        </CModalFooter>
+      </CModal>
+
       <CModal visible={errorModalVisible} onClose={() => setErrorModalVisible(false)}>
         <CModalHeader>Error</CModalHeader>
         <CModalBody>
-          <div>{errorMessage}</div>
+          <div>{String(errorMessage)}</div>
         </CModalBody>
         <CModalFooter>
           <div className="button-box">
@@ -233,13 +209,7 @@ const Departments = () => {
       {/*------------------------------------------------------------------------------------- */}
       <div className="buscador">
         <CForm className="d-flex">
-          <CFormInput
-            className="input-buttom-search"
-            type="text"
-            placeholder="Search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          ></CFormInput>
+          <CFormInput className="input-buttom-search" type="text" placeholder="Search"></CFormInput>
           <CButton className="search-buttom">
             <CIcon className="icon-search" icon={cilSearch} />
           </CButton>
@@ -263,6 +233,8 @@ const Departments = () => {
         </CModalBody>
       </CModal>
 
+      {/* ----------------------------------------------------------------------------------------------------*/}
+
       <CModal
         visible={editmodalVisible}
         onClose={() => {
@@ -271,7 +243,6 @@ const Departments = () => {
       >
         <div className="ccard-box mb-4">
           <CCard>
-            <CCardHeader>Add New Department</CCardHeader>
             <CCardBody>
               <CInputGroup className="mb-3">
                 <div className="d-flex  w-100 gap-3">
@@ -348,7 +319,6 @@ const Departments = () => {
                   </div>
                 </div>
               </CInputGroup>
-
               <CInputGroup className="mb-3">
                 <div className="d-flex  w-100 gap-3">
                   <div className="w-100">
@@ -381,6 +351,9 @@ const Departments = () => {
                 >
                   Editar
                 </CButton>
+                <CButton className="button-register" onClick={() => seteditModalVisible(false)}>
+                  Cerrar
+                </CButton>
               </div>
             </CCardFooter>
           </CCard>
@@ -390,7 +363,6 @@ const Departments = () => {
       {/*------------------------------------------------------------------------------------- */}
       <div className="conteiner mb-4">
         <CCard className="c_list">
-          {' '}
           <CCardHeader className="card-header">
             <div>Management Departments</div>
           </CCardHeader>
@@ -413,9 +385,7 @@ const Departments = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {/*map es una funcion que se usa para recorrer un arreglo , en este caso es el de departments*/}
-                  {/*el index , esta vaina es como un ciclo recorriendo un vector , department es el vector en cuestion y key es como un id , indentificador*/}
-                  {filteredDepartment.map((department, index) => (
+                  {departments.map((department, index) => (
                     <CTableRow key={index}>
                       <CTableDataCell>{index + 1}</CTableDataCell>
                       <CTableDataCell>{department.name}</CTableDataCell>
@@ -424,22 +394,20 @@ const Departments = () => {
                       <CTableDataCell>{department.email}</CTableDataCell>
                       <CTableDataCell>{department.operational_status}</CTableDataCell>
                       <CTableDataCell>
-                        {' '}
                         <CButton
-                          className="button-inventory  box-icon"
+                          className="box-icon"
                           onClick={() =>
                             Navigate(
                               `/management/Departments/inventory/${department.id_departments}`,
                             )
                           }
                         >
-                          {' '}
                           <CIcon icon={cibDropbox} className="text-success" />{' '}
                         </CButton>
                       </CTableDataCell>
                       <CTableDataCell>
                         <CButton
-                          className="button-edit box-icon"
+                          className="box-icon"
                           onClick={() => {
                             setCodigoEditar(department.id_departments)
                             setFormData({
@@ -452,13 +420,12 @@ const Departments = () => {
                             seteditModalVisible(true)
                           }}
                         >
-                          {' '}
                           <CIcon icon={cilPencil} className="text-info" />{' '}
                         </CButton>
                       </CTableDataCell>
                       <CTableDataCell>
                         <CButton
-                          className="button-delete  box-icon"
+                          className=" box-icon"
                           onClick={() => {
                             setMvisible(true)
                             SetdeleteDptid(department.id_departments)

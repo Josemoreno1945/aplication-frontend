@@ -29,6 +29,7 @@ import {
   cilPencil,
   cibDropbox,
   cilArrowCircleLeft,
+  cilXCircle,
 } from '@coreui/icons'
 import axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom'
@@ -36,27 +37,28 @@ import { Navigate, useNavigate } from 'react-router-dom'
 const Inventory = () => {
   const Navigate = useNavigate()
 
-  //los estados son como el nombre lo dice , puede considerarse banderas , es lo mas parecido que le veo
-  //tambien pueden ser arreglos
-
-  //estado para cuando se edita
-  const [isEditing, setIsEditing] = useState(false)
   //estado para guardar el id del item o bien
   const [itemId, setItemId] = useState(null)
-  //estado para sabar cuando se abre y cierra el modal
-  const [openmodal, setOpenModal] = useState(false)
 
+  const [openmodal, setOpenModal] = useState(false)
   //obtiene el id del dpto desde la url, y lo guarda en una variable para usarlo en el inventario
   //USE IA AL 100% AQUI (REPASAR)
   const { departmentId } = useParams()
-  //---------------------------------------------------------------------------------------------
+
+  const [errorMessage, setErrorMessage] = useState('')
+  const [messageEdit, setmessageEdit] = useState('')
+  const [messageDelete, setmessageDelete] = useState('')
+
+  const [errorModalVisible, setErrorModalVisible] = useState(false)
+  const [msgDeleteModal, setmsgDeleteModal] = useState(false)
+  const [msgEditModal, setmsgEditModal] = useState(false)
 
   //-------------------------------------------------------------------------------------------------------
   //aqui guardo los datos al llenar un formulario
   //osea lleno uno , se llena formdata y despues lo paso a inventory(otro arreglo)
   const [formData, setFormData] = useState([
     {
-      id: '',
+      id_assets: '',
       type: '',
       classification: '',
       description: '',
@@ -83,25 +85,30 @@ const Inventory = () => {
     },
   ])
 
-  //arreglo para almacenar todos los bienes o items(inventario)
   const [inventory, setInventory] = useState([])
-
-  //aja , esta funcion ejecuta o realiza , el proceso de eliminar un item de inventory
-
   const [deleteitemid, setDeleteitemid] = useState('')
   const [mvisible, setMvisible] = useState(false)
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+  }
+
   useEffect(() => {
     const fetchInventory = async () => {
-      const token = localStorage.getItem('token')
       try {
-        const response = await axios.get(`http://localhost:4000/inv${departmentId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Agrega el token en la cabecera
+        const token = localStorage.getItem('token')
+        const response = await axios.get(
+          `http://localhost:4000/AssetsDepartments/${departmentId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        })
+        )
         setInventory(response.data)
       } catch (error) {
+        setInventory([])
         console.error(`No se encontró el inventario del departamento ${departmentId}`, error)
       }
     }
@@ -111,90 +118,94 @@ const Inventory = () => {
     }
   }, [departmentId])
 
-  //----------------------------------------------------------------------------------------------------------------------
+  //---------------------------------------------------------------------------------------------------------------------------------------------
 
-  const Deleteitem = (id) => {
-    const updatedInventory = inventory.filter((inv) => inv.id !== id) //comparamos el id seleccionado con los del vector , y si son iguales lo descarta, ahora estaria entre comillas eliminado el que seleccione
-    setInventory(updatedInventory)
-    setMvisible(false)
-    axios
-      .delete(`http://localhost:5000/inv${departmentId}/${id}`) //esas comillas si o si xd
-      .then(() => console.log(`assets con ID ${id} eliminado`))
-      .catch((error) => console.error('Error al eliminar asset:', error))
+  const Getasset = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.get(`http://localhost:4000/AssetsDepartments/${departmentId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      setInventory(response.data)
+    } catch (err) {
+      setInventory([])
+      console.error(`No se encontró el inventario del departamento ${departmentId}`, err)
+    }
   }
 
   //---------------------------------------------------------------------------------------------------------------------------------------------
 
-  function EditItem(id) {
-    setFormData(inventory[id]) // Carga los datos del elemento seleccionado en el formulario
-    setIsEditing(true) // Cambia el estado a true para indicar que se está editando
-    setItemId(index) // Guarda el índice del elemento que se está editando
-    setOpenModal(true) // Abre el modal para editar
+  const Putasset = async (id) => {}
+
+  //----------------------------------------------------------------------------------------------------------------------
+
+  const Deleteasset = async (id) => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.delete(`http://localhost:4000/assets/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      Getasset()
+      setMvisible(false)
+      setmsgDeleteModal(true)
+      setmessageDelete(response.data.message)
+    } catch (err) {
+      console.log('Error al eliminar departamento:', err)
+    }
   }
 
-  //----------------------------------------------------------------------------------------------------------------------------------------------------
+  //---------------------------------------------------------------------------------------------------------------------------------------------
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-  }
-
-  const handleSubmit = () => {
-    if (!formData.id || !formData.type || !formData.acquisition_date || !formData.classification) {
-      alert('Please fill out all fields.')
-      return
+  const Postasset = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.post('http://localhost:4000/assets', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      setInventory(response.data)
+    } catch (err) {
+      console.error('Error al registrar asset:', err)
+      let msg
+      if (
+        err.response &&
+        err.response.data &&
+        Array.isArray(err.response.data.errors) &&
+        err.response.data.errors.length > 0
+      ) {
+        msg = err.response.data.errors[0].message
+      } else if (err.response && err.response.data && err.response.data.error) {
+        msg = err.response.data.error
+      }
+      setErrorMessage(msg)
+      setErrorModalVisible(true)
     }
-
-    axios
-      .post(`http://localhost:5000/inv${departmentId}`, formData)
-      .then((response) => console.log('Datos recibidos:', response.data))
-      .then((response) => setInventory(response.data))
-      .catch((error) => console.error('Error al obtener datos', error))
-
-    if (isEditing === true) {
-      axios.put(`http://localhost:5000/inv${departmentId}/${itemId}`)
-      const updatedInventory = [...inventory] // Crea una copia del inventario
-      updatedInventory[itemId] = formData // Actualiza el elemento en la posición correspondiente
-      setInventory(updatedInventory) // Actualiza el estado del inventario
-      setIsEditing(false) // Cambia la bandera de edición a false
-      setItemId(null) // Limpia el índice del elemento editado
-    } else {
-      // Si no se está editando, agrega un nuevo elemento
-      setInventory([...inventory, formData]) // Agrega el nuevo elemento al inventario
-    }
-    // Limpia el formulario y cierra el modal
-    setFormData({
-      id: '',
-      type: '',
-      classification: '',
-      description: '',
-      color: '',
-      brand: '',
-      model: '',
-      serial: '',
-      height: '',
-      width: '',
-      depth: '',
-      plate: '',
-      bodywork: '',
-      engine: '',
-      year_of_the_vehicule: '',
-      acquisition_value: '',
-      use_status: '',
-      conservation_status: '',
-      observation: '',
-      physical_location: '',
-      direction_dependency: '',
-      level: '',
-      analyst: '',
-      acquisition_date: '',
-    })
-
-    setOpenModal(false)
   }
 
   return (
     <>
+      <CModal visible={errorModalVisible} onClose={() => setErrorModalVisible(false)}>
+        <CModalHeader>Error</CModalHeader>
+        <CModalBody>
+          <div>{errorMessage}</div>
+        </CModalBody>
+        <CModalFooter>
+          <div className="button-box">
+            <CButton className="button-register" onClick={() => setErrorModalVisible(false)}>
+              Cerrar
+            </CButton>
+          </div>
+        </CModalFooter>
+      </CModal>
+
+      {/*Modal de eliminar -------------------------------------------------------------------------------------------------------------*/}
       <CModal visible={mvisible} onClose={() => setMvisible(false)}>
         <CModalHeader className="Modal-header">Delete item</CModalHeader>
         <CFormLabel className="label-delete">Are you sure you want to delete?</CFormLabel>
@@ -203,16 +214,28 @@ const Inventory = () => {
             <CButton className="buttom-accept" onClick={() => setMvisible(false)}>
               No
             </CButton>
-            <CButton className="buttom-accept" onClick={() => Deleteitem(deleteitemid)}>
+            <CButton className="buttom-accept" onClick={() => Deleteasset(deleteitemid)}>
               Yes
             </CButton>
           </div>
         </CModalBody>
       </CModal>
 
-      <div className="container">
-        <div className="buttom-box"></div>
+      <CModal visible={msgDeleteModal} onClose={() => setmsgDeleteModal(false)}>
+        <CModalBody>
+          <div>{String(messageDelete)}</div>
+        </CModalBody>
+        <CModalFooter>
+          <div className="button-box">
+            <CButton className="button-register" onClick={() => setmsgDeleteModal(false)}>
+              Cerrar
+            </CButton>
+          </div>
+        </CModalFooter>
+      </CModal>
 
+      {/*Modal de agregar -------------------------------------------------------------------------------------------------------------*/}
+      <div className="container">
         <CModal visible={openmodal} onClose={() => setOpenModal(false)}>
           <CModalHeader className="Modal-header">Add new asset</CModalHeader>
           <CModalBody>
@@ -391,7 +414,6 @@ const Inventory = () => {
                 value={formData.observation}
                 onChange={handleInputChange}
               ></CFormInput>
-
               <CFormLabel htmlFor="physical_location">Physical location</CFormLabel>
               <CFormInput
                 type="text"
@@ -401,7 +423,6 @@ const Inventory = () => {
                 value={formData.physical_location}
                 onChange={handleInputChange}
               ></CFormInput>
-
               <CFormLabel htmlFor="direction_dependency">Direction dependency</CFormLabel>
               <CFormInput
                 type="text"
@@ -411,7 +432,6 @@ const Inventory = () => {
                 value={formData.direction_dependency}
                 onChange={handleInputChange}
               ></CFormInput>
-
               <CFormLabel htmlFor="level">Level</CFormLabel>
               <CFormInput
                 type="text"
@@ -453,7 +473,9 @@ const Inventory = () => {
           </CModalFooter>
         </CModal>
 
-        <CCard className="m-5">
+        {/*TABLA -------------------------------------------------------------------------------------------------------------*/}
+
+        <CCard className="mb-4">
           <CCardHeader className="card-header">
             <div>Inventory from department:{departmentId}</div>
 
@@ -462,7 +484,7 @@ const Inventory = () => {
                 className="buttom-add"
                 onClick={() => {
                   setFormData({
-                    id: '',
+                    id_assets: '',
                     type: '',
                     classification: '',
                     description: '',
@@ -493,7 +515,6 @@ const Inventory = () => {
               >
                 <CIcon icon={cilPlus} className="buttom-icon" /> Add
               </CButton>
-
               <CButton className="buttom-add" onClick={() => Navigate(`/management/Departments`)}>
                 <CIcon icon={cilArrowCircleLeft} className="buttom-icon" /> Back
               </CButton>
@@ -501,13 +522,13 @@ const Inventory = () => {
           </CCardHeader>
           <CCardBody>
             <div className="table-responsive">
-              <CTable>
+              <CTable className="vertical-bordered-table">
                 <CTableHead>
                   <CTableRow>
-                    <CTableHeaderCell>ID</CTableHeaderCell>
+                    <CTableHeaderCell className="column">ID</CTableHeaderCell>
                     <CTableHeaderCell>Type</CTableHeaderCell>
                     <CTableHeaderCell>Classification</CTableHeaderCell>
-                    <CTableHeaderCell>Description</CTableHeaderCell>
+                    <CTableHeaderCell className="column">Description</CTableHeaderCell>
                     <CTableHeaderCell>Color</CTableHeaderCell>
                     <CTableHeaderCell>Brand</CTableHeaderCell>
                     <CTableHeaderCell>Model</CTableHeaderCell>
@@ -518,63 +539,77 @@ const Inventory = () => {
                     <CTableHeaderCell>Plate</CTableHeaderCell>
                     <CTableHeaderCell>Bodywork</CTableHeaderCell>
                     <CTableHeaderCell>Engine</CTableHeaderCell>
-                    <CTableHeaderCell>Year of the vehicule</CTableHeaderCell>
-                    <CTableHeaderCell>Acquisition value</CTableHeaderCell>
-                    <CTableHeaderCell>Use status</CTableHeaderCell>
-                    <CTableHeaderCell>Conservation status</CTableHeaderCell>
-                    <CTableHeaderCell>Observation</CTableHeaderCell>
-                    <CTableHeaderCell>Physical location</CTableHeaderCell>
-                    <CTableHeaderCell>Direction dependency</CTableHeaderCell>
+                    <CTableHeaderCell className="column">Year of the vehicule</CTableHeaderCell>
+                    <CTableHeaderCell className="column">Acquisition value</CTableHeaderCell>
+                    <CTableHeaderCell className="column">Use status</CTableHeaderCell>
+                    <CTableHeaderCell className="column">Conservation status</CTableHeaderCell>
+                    <CTableHeaderCell className="column">Observation</CTableHeaderCell>
+                    <CTableHeaderCell className="column">Physical location</CTableHeaderCell>
+                    <CTableHeaderCell className="column">Direction dependency</CTableHeaderCell>
                     <CTableHeaderCell>Level</CTableHeaderCell>
                     <CTableHeaderCell>Analyst</CTableHeaderCell>
-                    <CTableHeaderCell></CTableHeaderCell>
-                    <CTableHeaderCell></CTableHeaderCell>
+                    <CTableHeaderCell>Edit</CTableHeaderCell>
+                    <CTableHeaderCell>Delete</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {inventory.map((item, index) => (
-                    <CTableRow key={index}>
-                      <CTableDataCell>{item.id}</CTableDataCell>
-                      <CTableDataCell>{item.type}</CTableDataCell>
-                      <CTableDataCell>{item.classification}</CTableDataCell>
-                      <CTableDataCell>{item.description}</CTableDataCell>
-                      <CTableDataCell>{item.color}</CTableDataCell>
-                      <CTableDataCell>{item.brand}</CTableDataCell>
-                      <CTableDataCell>{item.model}</CTableDataCell>
-                      <CTableDataCell>{item.serial}</CTableDataCell>
-                      <CTableDataCell>{item.height}</CTableDataCell>
-                      <CTableDataCell>{item.width}</CTableDataCell>
-                      <CTableDataCell>{item.depth}</CTableDataCell>
-                      <CTableDataCell>{item.plate}</CTableDataCell>
-                      <CTableDataCell>{item.bodywork}</CTableDataCell>
-                      <CTableDataCell>{item.engine}</CTableDataCell>
-                      <CTableDataCell>{item.year_of_the_vehicule}</CTableDataCell>
-                      <CTableDataCell>{item.acquisition_value}</CTableDataCell>
-                      <CTableDataCell>{item.use_status}</CTableDataCell>
-                      <CTableDataCell>{item.conservation_status}</CTableDataCell>
-                      <CTableDataCell>{item.observation}</CTableDataCell>
-                      <CTableDataCell>{item.physical_location}</CTableDataCell>
-                      <CTableDataCell>{item.direction_dependency}</CTableDataCell>
-                      <CTableDataCell>{item.level}</CTableDataCell>
-                      <CTableDataCell>{item.analyst}</CTableDataCell>
-                      <CTableDataCell>
-                        <CButton onClick={() => EditItem(item.id)}>
-                          {' '}
-                          <CIcon icon={cilPencil} />{' '}
-                        </CButton>
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <CButton
-                          onClick={() => {
-                            setDeleteitemid(item.id)
-                            setMvisible(true)
-                          }}
-                        >
-                          <CIcon icon={cilX} />
-                        </CButton>
+                  {Array.isArray(inventory) && inventory.length > 0 ? (
+                    inventory.map((item, index) => (
+                      <CTableRow key={index}>
+                        <CTableDataCell className="column">{item.id_assets}</CTableDataCell>
+                        <CTableDataCell>{item.type}</CTableDataCell>
+                        <CTableDataCell>{item.classification}</CTableDataCell>
+                        <CTableDataCell className="column">{item.description}</CTableDataCell>
+                        <CTableDataCell>{item.color}</CTableDataCell>
+                        <CTableDataCell>{item.brand}</CTableDataCell>
+                        <CTableDataCell>{item.model}</CTableDataCell>
+                        <CTableDataCell>{item.serial}</CTableDataCell>
+                        <CTableDataCell>{item.height}</CTableDataCell>
+                        <CTableDataCell>{item.width}</CTableDataCell>
+                        <CTableDataCell>{item.depth}</CTableDataCell>
+                        <CTableDataCell>{item.plate}</CTableDataCell>
+                        <CTableDataCell>{item.bodywork}</CTableDataCell>
+                        <CTableDataCell>{item.engine}</CTableDataCell>
+                        <CTableDataCell className="column">
+                          {item.year_of_the_vehicule}
+                        </CTableDataCell>
+                        <CTableDataCell className="column">{item.acquisition_value}</CTableDataCell>
+                        <CTableDataCell className="column">{item.use_status}</CTableDataCell>
+                        <CTableDataCell className="column">
+                          {item.conservation_status}
+                        </CTableDataCell>
+                        <CTableDataCell className="column">{item.observation}</CTableDataCell>
+                        <CTableDataCell className="column">{item.physical_location}</CTableDataCell>
+                        <CTableDataCell className="column">
+                          {item.direction_dependency}
+                        </CTableDataCell>
+                        <CTableDataCell>{item.level}</CTableDataCell>
+                        <CTableDataCell>{item.analyst}</CTableDataCell>
+                        <CTableDataCell>
+                          <CButton className="box-icon" onClick={() => Putasset(item.id_assets)}>
+                            <CIcon icon={cilPencil} className="text-info" />
+                          </CButton>
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          <CButton
+                            className="box-icon"
+                            onClick={() => {
+                              setDeleteitemid(item.id_assets)
+                              setMvisible(true)
+                            }}
+                          >
+                            <CIcon icon={cilXCircle} className="text-danger" />
+                          </CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
+                  ) : (
+                    <CTableRow>
+                      <CTableDataCell colSpan={24} className="text-center">
+                        {'Assets not foud'}
                       </CTableDataCell>
                     </CTableRow>
-                  ))}
+                  )}
                 </CTableBody>
               </CTable>
             </div>

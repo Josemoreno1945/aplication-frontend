@@ -1,6 +1,6 @@
 .container{
     display: flex;
-    
+
 }
 
 .buttom-add{
@@ -97,4 +97,34 @@
     justify-content: space-between;
     align-items: center;
     
+}
+
+.box-icon{
+    transform:scale(1.2);
+    &:hover{
+        transition: 0.5s;
+        transform: scale(1.4);
+    }
+    
+}
+
+.column {
+    width: 250px; /* Un valor inicial más generoso, ajusta a tu necesidad */
+    min-width: 250px; /* Asegura un ancho mínimo, para evitar que se comprima demasiado */
+    white-space: normal; 
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+
+.vertical-bordered-table th,
+.vertical-bordered-table td {
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
+.vertical-bordered-table {
+  border-collapse: collapse;
 }

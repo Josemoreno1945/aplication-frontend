@@ -72,34 +72,31 @@ const register_dpt = () => {
   })
 
   // al presionar el boton save , este envia o guarda los datos -----------------------------------------------
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     try {
       const token = localStorage.getItem('token')
-      axios
-        .post('http://localhost:4000/departments', formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json', // Agrega el token en la cabecera
-          },
-        })
-        .then((response) => setDepartments(response.data))
-        .catch((err) => {
-          let msg
-          if (
-            err.response &&
-            err.response.data &&
-            Array.isArray(err.response.data.errors) &&
-            err.response.data.errors.length > 0
-          ) {
-            msg = err.response.data.errors[0].message
-          } else if (err.response && err.response.data && err.response.data.error) {
-            msg = err.response.data.error
-          }
-          setErrorMessage(msg)
-          setErrorModalVisible(true)
-        })
+      const response = await axios.post('http://localhost:4000/departments', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      setDepartments(response.data)
     } catch (err) {
       console.error('Error al registrar departamento:', err)
+      let msg
+      if (
+        err.response &&
+        err.response.data &&
+        Array.isArray(err.response.data.errors) &&
+        err.response.data.errors.length > 0
+      ) {
+        msg = err.response.data.errors[0].message
+      } else if (err.response && err.response.data && err.response.data.error) {
+        msg = err.response.data.error
+      }
+      setErrorMessage(msg)
+      setErrorModalVisible(true)
     }
   }
 
