@@ -40,18 +40,25 @@ import {
 } from '@coreui/icons'
 import { Navigate, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+
 //-----------------------------------------------------------------------------------------------------
 
 const Departments = () => {
   const Navigate = useNavigate()
-  const [search, setSearch] = useState('')
+
   const [mvisible, setMvisible] = useState(false)
   const [departments, setDepartments] = useState([])
   const [editmodalVisible, seteditModalVisible] = useState(false)
   const [codigoEditar, setCodigoEditar] = useState(null)
+  const [deleteDptid, SetdeleteDptid] = useState(null)
 
   const [errorModalVisible, setErrorModalVisible] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+
+  const [messageEdit, setmessageEdit] = useState('')
+  const [messageDelete, setmessageDelete] = useState('')
+  const [msgDeleteModal, setmsgDeleteModal] = useState(false)
+  const [msgEditModal, setmsgEditModal] = useState(false)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -62,84 +69,12 @@ const Departments = () => {
   })
 
   const InputChangedata = (e) => {
-    //e es como un parametro
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value }) //deja todos los valores de formdata pero dejando el nuevo valor , osea por eso el name , eso variaria , puede ser name , addres etc
   }
 
-  //-------------------------------------------------------------------------------------------
-  /*
-  //funcion para eliminar un registro de la tabla de departamentos
-  const Delete = (id) => {
-    const updatedDepartments = departments.filter((department) => department.id !== id) //comparamos el id seleccionado con los del vector , y si son iguales lo descarta, ahora estaria entre comillas eliminado el que seleccione
-    setDepartments(updatedDepartments)
-    setMvisible(false)
-    axios
-      .delete(`http://localhost:5000/departments/${id}`) //esas comillas si o si xd
-      .then(() => console.log(`Departamento con ID ${id} eliminado`))
-      .catch((error) => console.error('Error al eliminar departamento:', error))
-  }
-*/
-
-  /*
-  // al presionar el boton save , este envia o guarda los datos -----------------------------------------------
-  const handleSubmit = () => {
-    if (
-      !formData.name ||
-      !formData.address ||
-      !formData.phone ||
-      !formData.email ||
-      !formData.operational_status
-    ) {
-      alert('Please fill out all fields.')
-      return
-    }
-    {
-    }
-    if (!formData.email.includes('@') || !formData.email.includes('.com')) {
-      alert('Please enter a valid email address.')
-      return
-    }
-
-    //---------------------------------------------------------------------------------------------------
-    //envia los datos del formulario al json , asi que hay un post , pero tambien un get para que automaticamente me muestre los datos
-
-    axios
-      .post('http://localhost:5000/departments', formData)
-      .then(() => axios.get('http://localhost:5000/departments'))
-      .then((response) => {
-        setDepartments(response.data)
-      })
-      .catch((error) => console.error('Error al agregar departamento:', error))
-
-    //-------------------------------------------------------------------
-    //ahora in if , solo es cuando se esta editando , esto lo sabemos con banderas . cuando isediting sea true entra
-    if (isEditing === true) {
-      axios.put(`http://localhost:5000/departments/${departmentId}`, formData).then(() => {
-        const updatedDepartments = [...departments] //mete los departamentos a un nuevo arreglo
-        const index = updatedDepartments.findIndex((department) => department.id === departmentId)
-        if (index !== -1) {
-          updatedDepartments[index] = formData
-          setDepartments(updatedDepartments) // Actualiza el estado con los departamentos editados
-        }
-        setIsEditing(false) //cambia la bandera a false
-        setDepartmentId(null) //limpia la variable de id
-      })
-    }
-
-    setFormData({
-      //limpia el formulario
-      name: '',
-      address: '',
-      phone: '',
-      email: '',
-      operational_status: '',
-    })
-    setModalVisible(false)
-  }
-*/
   //--------------------------------------------------------------------------------------------
-
+  /*
   let filteredDepartment = [] //let para que pueda cambiar los valores , aqui inicializo un vector vacio
 
   if (search === '') {
@@ -156,23 +91,26 @@ const Departments = () => {
         dpt.operational_status.toLowerCase().includes(search.toLowerCase()),
     )
   }
+*/
 
+  //GET PARA DEPARTAMENTOS --------------------------------------------------------------------------------
   useEffect(() => {
     const token = localStorage.getItem('token')
     axios
       .get('http://localhost:4000/departments', {
         headers: {
-          Authorization: `Bearer ${token}`, // Agrega el token en la cabecera
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => setDepartments(response.data))
       .catch((error) => console.error('Error al obtener datos', error))
   }, [])
 
+  //GET DE DEPARTAMENTOS COMO FUNCION ----------------------------------------------------------------------
   const getDepartments = async () => {
     try {
       const token = localStorage.getItem('token')
-      axios
+      await axios
         .get('http://localhost:4000/departments', {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -184,44 +122,80 @@ const Departments = () => {
     }
   }
 
-  //ahora una funcion para editar un registro
+  //DELETE DE DEPARTAMENTOS -----------------------------------------------------------------------------------
 
-  const putDepartments = async (id_departments) => {
+  const Delete = async (id) => {
     try {
       const token = localStorage.getItem('token')
-      console.log(id_departments)
-      await axios.put(`http://localhost:4000/departments/${id_departments}`, formData, {
+      const response = await axios.delete(`http://localhost:4000/departments/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       })
-      seteditModalVisible(false)
       getDepartments()
+      setMvisible(false)
+      setmsgDeleteModal(true)
+      setmessageDelete(response.data.message)
     } catch (err) {
-      console.error('Error al obtener datos', err)
-      let msg
-      if (
-        err.response &&
-        err.response.data &&
-        Array.isArray(err.response.data.errors) &&
-        err.response.data.errors.length > 0
-      ) {
-        msg = err.response.data.errors[0].message
-      } else if (err.response && err.response.data && err.response.data.error) {
-        msg = err.response.data.error
-      }
-      setErrorMessage(msg)
+      console.log('Error al eliminar departamento:', err)
+    }
+  }
+
+  //PUT DE DEPARTAMENTOS --------------------------------------------------------------------------------
+
+  const putDepartments = async (id) => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.put(`http://localhost:4000/departments/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      getDepartments()
+      seteditModalVisible(false)
+      setmsgEditModal(true)
+      setmessageEdit(response.data.message)
+    } catch (err) {
+      setErrorMessage(err.response.data.error)
       setErrorModalVisible(true)
+      seteditModalVisible(false)
     }
   }
 
   return (
     <>
+      <CModal visible={msgDeleteModal} onClose={() => setmsgDeleteModal(false)}>
+        <CModalBody>
+          <div>{String(messageDelete)}</div>
+        </CModalBody>
+        <CModalFooter>
+          <div className="button-box">
+            <CButton className="button-register" onClick={() => setmsgDeleteModal(false)}>
+              Cerrar
+            </CButton>
+          </div>
+        </CModalFooter>
+      </CModal>
+
+      <CModal visible={msgEditModal} onClose={() => setmsgEditModal(false)}>
+        <CModalBody>
+          <div>{String(messageEdit)}</div>
+        </CModalBody>
+        <CModalFooter>
+          <div className="button-box">
+            <CButton className="button-register" onClick={() => setmsgEditModal(false)}>
+              Cerrar
+            </CButton>
+          </div>
+        </CModalFooter>
+      </CModal>
+
       <CModal visible={errorModalVisible} onClose={() => setErrorModalVisible(false)}>
         <CModalHeader>Error</CModalHeader>
         <CModalBody>
-          <div>{errorMessage}</div>
+          <div>{String(errorMessage)}</div>
         </CModalBody>
         <CModalFooter>
           <div className="button-box">
@@ -235,13 +209,7 @@ const Departments = () => {
       {/*------------------------------------------------------------------------------------- */}
       <div className="buscador">
         <CForm className="d-flex">
-          <CFormInput
-            className="input-buttom-search"
-            type="text"
-            placeholder="Search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          ></CFormInput>
+          <CFormInput className="input-buttom-search" type="text" placeholder="Search"></CFormInput>
           <CButton className="search-buttom">
             <CIcon className="icon-search" icon={cilSearch} />
           </CButton>
@@ -265,6 +233,8 @@ const Departments = () => {
         </CModalBody>
       </CModal>
 
+      {/* ----------------------------------------------------------------------------------------------------*/}
+
       <CModal
         visible={editmodalVisible}
         onClose={() => {
@@ -273,7 +243,6 @@ const Departments = () => {
       >
         <div className="ccard-box mb-4">
           <CCard>
-            <CCardHeader>Add New Department</CCardHeader>
             <CCardBody>
               <CInputGroup className="mb-3">
                 <div className="d-flex  w-100 gap-3">
@@ -350,7 +319,6 @@ const Departments = () => {
                   </div>
                 </div>
               </CInputGroup>
-
               <CInputGroup className="mb-3">
                 <div className="d-flex  w-100 gap-3">
                   <div className="w-100">
@@ -383,6 +351,9 @@ const Departments = () => {
                 >
                   Editar
                 </CButton>
+                <CButton className="button-register" onClick={() => seteditModalVisible(false)}>
+                  Cerrar
+                </CButton>
               </div>
             </CCardFooter>
           </CCard>
@@ -392,7 +363,6 @@ const Departments = () => {
       {/*------------------------------------------------------------------------------------- */}
       <div className="conteiner mb-4">
         <CCard className="c_list">
-          {' '}
           <CCardHeader className="card-header">
             <div>Management Departments</div>
           </CCardHeader>
@@ -415,9 +385,7 @@ const Departments = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {/*map es una funcion que se usa para recorrer un arreglo , en este caso es el de departments*/}
-                  {/*el index , esta vaina es como un ciclo recorriendo un vector , department es el vector en cuestion y key es como un id , indentificador*/}
-                  {filteredDepartment.map((department, index) => (
+                  {departments.map((department, index) => (
                     <CTableRow key={index}>
                       <CTableDataCell>{index + 1}</CTableDataCell>
                       <CTableDataCell>{department.name}</CTableDataCell>
@@ -426,18 +394,20 @@ const Departments = () => {
                       <CTableDataCell>{department.email}</CTableDataCell>
                       <CTableDataCell>{department.operational_status}</CTableDataCell>
                       <CTableDataCell>
-                        {' '}
                         <CButton
-                          className="button-inventory  box-icon"
-                          onClick={() => Navigate(`/management/Departments/inventory/${index}`)}
+                          className="box-icon"
+                          onClick={() =>
+                            Navigate(
+                              `/management/Departments/inventory/${department.id_departments}`,
+                            )
+                          }
                         >
-                          {' '}
                           <CIcon icon={cibDropbox} className="text-success" />{' '}
                         </CButton>
                       </CTableDataCell>
                       <CTableDataCell>
                         <CButton
-                          className="button-edit box-icon"
+                          className="box-icon"
                           onClick={() => {
                             setCodigoEditar(department.id_departments)
                             setFormData({
@@ -450,15 +420,15 @@ const Departments = () => {
                             seteditModalVisible(true)
                           }}
                         >
-                          {' '}
                           <CIcon icon={cilPencil} className="text-info" />{' '}
                         </CButton>
                       </CTableDataCell>
                       <CTableDataCell>
                         <CButton
-                          className="button-delete  box-icon"
+                          className=" box-icon"
                           onClick={() => {
                             setMvisible(true)
+                            SetdeleteDptid(department.id_departments)
                           }}
                         >
                           <CIcon icon={cilXCircle} className="text-danger" />{' '}
