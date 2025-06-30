@@ -57,6 +57,9 @@ const register_dpt = () => {
   const [errorModalVisible, setErrorModalVisible] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
+  const [RegisterModalVisible, setRegisterModalVisible] = useState(false)
+  const [Registermsg, setRegistermsg] = useState('')
+
   const InputChangedata = (e) => {
     //e es como un parametro
     const { name, value } = e.target
@@ -82,6 +85,8 @@ const register_dpt = () => {
         },
       })
       setDepartments(response.data)
+      setRegistermsg(response.data.message)
+      setRegisterModalVisible(true)
     } catch (err) {
       console.error('Error al registrar departamento:', err)
       let msg
@@ -102,6 +107,19 @@ const register_dpt = () => {
 
   return (
     <>
+      <CModal visible={RegisterModalVisible} onClose={() => setRegisterModalVisible(false)}>
+        <CModalBody>
+          <div>{Registermsg}</div>
+        </CModalBody>
+        <CModalFooter>
+          <div className="button-box">
+            <CButton className="button-register" onClick={() => setRegisterModalVisible(false)}>
+              Cerrar
+            </CButton>
+          </div>
+        </CModalFooter>
+      </CModal>
+
       <CModal visible={errorModalVisible} onClose={() => setErrorModalVisible(false)}>
         <CModalHeader>Error</CModalHeader>
         <CModalBody>

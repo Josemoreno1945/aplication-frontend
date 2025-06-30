@@ -18,6 +18,9 @@ import {
   CFormSelect,
   CForm,
   CModalFooter,
+  CInputGroup,
+  CInputGroupText,
+  CFormTextarea,
 } from '@coreui/react'
 import { useParams } from 'react-router-dom'
 import 'src/scss/inventory.scss'
@@ -30,9 +33,16 @@ import {
   cibDropbox,
   cilArrowCircleLeft,
   cilXCircle,
+  cilOptions,
+  cilTextSquare,
+  cilSquare,
+  cilCommentSquare,
+  cilPen,
+  cilCalendar,
 } from '@coreui/icons'
 import axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom'
+import { number } from 'prop-types'
 
 const Inventory = () => {
   const Navigate = useNavigate()
@@ -53,12 +63,41 @@ const Inventory = () => {
   const [msgDeleteModal, setmsgDeleteModal] = useState(false)
   const [msgEditModal, setmsgEditModal] = useState(false)
 
+  const [InventoryID, setInventoryID] = useState('')
+
   //-------------------------------------------------------------------------------------------------------
   //aqui guardo los datos al llenar un formulario
   //osea lleno uno , se llena formdata y despues lo paso a inventory(otro arreglo)
-  const [formData, setFormData] = useState([
-    {
-      id_assets: '',
+  const [formData, setFormData] = useState({
+    id_inventory: '',
+    type: '',
+    classification: '',
+    description: '',
+    color: '',
+    brand: '',
+    model: '',
+    serial: '',
+    height: 0,
+    width: 0,
+    depth: 0,
+    plate: '',
+    bodywork: '',
+    engine: '',
+    year_of_the_vehicle: '',
+    acquisition_value: 0,
+    use_status: '',
+    conservation_status: '',
+    observation: '',
+    physical_location: '',
+    direction_dependency: '',
+    level: '',
+    analyst: '',
+    acquisition_date: '',
+  })
+
+  const delete_formdata = () => {
+    setFormData({
+      id_inventory: '',
       type: '',
       classification: '',
       description: '',
@@ -66,14 +105,14 @@ const Inventory = () => {
       brand: '',
       model: '',
       serial: '',
-      height: '',
-      width: '',
-      depth: '',
+      height: 0,
+      width: 0,
+      depth: 0,
       plate: '',
       bodywork: '',
       engine: '',
-      year_of_the_vehicule: '',
-      acquisition_value: '',
+      year_of_the_vehicle: '',
+      acquisition_value: 0,
       use_status: '',
       conservation_status: '',
       observation: '',
@@ -82,16 +121,64 @@ const Inventory = () => {
       level: '',
       analyst: '',
       acquisition_date: '',
-    },
-  ])
+    })
+  }
 
   const [inventory, setInventory] = useState([])
   const [deleteitemid, setDeleteitemid] = useState('')
   const [mvisible, setMvisible] = useState(false)
 
+  const [modal0, Setmodal0] = useState(false)
+  const [modal1, Setmodal1] = useState(false)
+  const [modal2, Setmodal2] = useState(false)
+  const [modal3, Setmodal3] = useState(false)
+
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [editAssetId, setEditAssetId] = useState(null)
+
   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
+    const { name, value, type } = e.target
+    const newValue = type === 'number' ? Number(value) : value
+    setFormData((prev) => ({ ...prev, [name]: newValue }))
+  }
+
+  const handleEditAsset = (asset) => {
+    setFormData({
+      id_inventory: asset.id_inventory,
+      type: asset.type,
+      classification: asset.classification,
+      description: asset.description,
+      color: asset.color,
+      brand: asset.brand,
+      model: asset.model,
+      serial: asset.serial,
+      height: asset.height,
+      width: asset.width,
+      depth: asset.depth,
+      plate: asset.plate,
+      bodywork: asset.bodywork,
+      engine: asset.engine,
+      year_of_the_vehicle: asset.year_of_the_vehicle,
+      acquisition_value: asset.acquisition_value,
+      use_status: asset.use_status,
+      conservation_status: asset.conservation_status,
+      observation: asset.observation,
+      physical_location: asset.physical_location,
+      direction_dependency: asset.direction_dependency,
+      level: asset.level,
+      analyst: asset.analyst,
+      acquisition_date: asset.acquisition_date,
+    })
+    setIsEditMode(true)
+    setEditAssetId(asset.id_assets)
+    // Abre el modal correspondiente según el tipo
+    if (asset.type === 'furniture') {
+      Setmodal1(true)
+    } else if (asset.type === 'vehicles') {
+      Setmodal2(true)
+    } else if (asset.type === 'equipment') {
+      Setmodal3(true)
+    }
   }
 
   useEffect(() => {
@@ -116,6 +203,25 @@ const Inventory = () => {
     if (departmentId !== null && departmentId !== undefined) {
       fetchInventory()
     }
+
+    const GetInvID = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get(`http://localhost:4000/assetsinventory/${departmentId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        const inventoryId = response.data.id_inventory
+
+        setInventoryID(inventoryId)
+      } catch (err) {
+        setInventory([])
+        console.error(`No se encontró el inventario del departamento ${departmentId}`, err)
+      }
+    }
+
+    GetInvID()
   }, [departmentId])
 
   //---------------------------------------------------------------------------------------------------------------------------------------------
@@ -137,7 +243,24 @@ const Inventory = () => {
 
   //---------------------------------------------------------------------------------------------------------------------------------------------
 
-  const Putasset = async (id) => {}
+  const Putasset = async (id) => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.put(`http://localhost:4000/assets/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      Getasset()
+      setIsEditMode(false)
+      setEditAssetId(null)
+      Setmodal1(false)
+      Setmodal2(false)
+      Setmodal3(false)
+      delete_formdata()
+    } catch (err) {}
+  }
 
   //----------------------------------------------------------------------------------------------------------------------
 
@@ -163,14 +286,28 @@ const Inventory = () => {
 
   const Postasset = async () => {
     try {
+      //esta vaina me pone el inventoryid y convierte esos datosa number en el formdata
+      const dataToSend = {
+        ...formData,
+        id_inventory: InventoryID,
+        depth: Number(formData.depth),
+        height: Number(formData.height),
+        width: Number(formData.width),
+        year_of_the_vehicle: Number(formData.year_of_the_vehicle),
+        acquisition_value: Number(formData.acquisition_value),
+      }
+
       const token = localStorage.getItem('token')
-      const response = await axios.post('http://localhost:4000/assets', formData, {
+      const response = await axios.post('http://localhost:4000/assets', dataToSend, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       })
+
       setInventory(response.data)
+      Getasset()
+      delete_formdata()
     } catch (err) {
       console.error('Error al registrar asset:', err)
       let msg
@@ -186,6 +323,7 @@ const Inventory = () => {
       }
       setErrorMessage(msg)
       setErrorModalVisible(true)
+      setOpenModal(false)
     }
   }
 
@@ -235,239 +373,1267 @@ const Inventory = () => {
       </CModal>
 
       {/*Modal de agregar -------------------------------------------------------------------------------------------------------------*/}
+
+      {/*Modal 0 de elegir el tipo -------------------------------------------------------------------------------------------------------------*/}
+
       <div className="container">
-        <CModal visible={openmodal} onClose={() => setOpenModal(false)}>
+        <CModal
+          visible={modal0}
+          onClose={() => {
+            Setmodal0(false)
+          }}
+        >
           <CModalHeader className="Modal-header">Add new asset</CModalHeader>
           <CModalBody>
             <CForm>
-              <CFormLabel htmlFor="id_assets">id:</CFormLabel>
-              <CFormInput
-                type="number"
-                id="id"
-                name="id"
-                placeholder="Identification of the asset"
-                value={formData.id}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="type">Type:</CFormLabel>
-              <CFormSelect id="type" name="type" value={formData.type} onChange={handleInputChange}>
-                <option value="">Select the asset type</option>
-                <option value="furniture">Furniture</option>
-                <option value="vehicles">Vehicles</option>
-                <option value="equiment">Equipment</option>
-              </CFormSelect>
-              <CFormLabel htmlFor="classification">Classification:</CFormLabel>
-              <CFormInput
-                type="text"
-                id="classification"
-                name="classification"
-                placeholder="Clasification"
-                value={formData.classification}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="description">Description:</CFormLabel>
-              <CFormInput
-                type="text"
-                id="description"
-                name="description"
-                placeholder="Description"
-                value={formData.description}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="color">Color:</CFormLabel>
-              <CFormInput
-                type="text"
-                id="color"
-                name="color"
-                placeholder="Color"
-                value={formData.color}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="brand">Brand:</CFormLabel>
-              <CFormInput
-                type="text"
-                id="brand"
-                name="brand"
-                placeholder="Brand"
-                value={formData.brand}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="model">Model:</CFormLabel>
-              <CFormInput
-                type="text"
-                id="model"
-                name="model"
-                placeholder="Model"
-                value={formData.model}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="serial">Serial:</CFormLabel>
-              <CFormInput
-                type="text"
-                id="serial"
-                name="serial"
-                placeholder="Serial"
-                value={formData.serial}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="height">Height:</CFormLabel>
-              <CFormInput
-                type="number"
-                id="height"
-                name="height"
-                placeholder="Height"
-                value={formData.height}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="width">Width:</CFormLabel>
-              <CFormInput
-                type="number"
-                id="width"
-                name="width"
-                placeholder="Width"
-                value={formData.width}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="depth">Depth:</CFormLabel>
-              <CFormInput
-                type="number"
-                id="depth"
-                name="depth"
-                placeholder="Depth"
-                value={formData.depth}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="plate">Plate:</CFormLabel>
-              <CFormInput
-                type="text"
-                id="plate"
-                name="plate"
-                placeholder="Plate"
-                value={formData.plate}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="bodywork">Bodywork:</CFormLabel>
-              <CFormInput
-                type="text"
-                id="bodywork"
-                name="bodywork"
-                placeholder="Bodywork"
-                value={formData.bodywork}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="engine">Engine:</CFormLabel>
-              <CFormInput
-                type="text"
-                id="engine"
-                name="engine"
-                placeholder="Engine"
-                value={formData.engine}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="year_of_the_vehicule">Year of the vehicule:</CFormLabel>
-              <CFormInput
-                type="number"
-                id="year_of_the_vehicule"
-                name="year_of_the_vehicule"
-                placeholder="Year of the vehicule"
-                value={formData.year_of_the_vehicule}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="acquisition_value">Acquisition value:</CFormLabel>
-              <CFormInput
-                type="number"
-                id="acquisition_value"
-                name="acquisition_value"
-                placeholder="Acquisition value"
-                value={formData.acquisition_value}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="use_status">Use status:</CFormLabel>
-              <CFormSelect
-                id="use_status"
-                name="use_status"
-                value={formData.use_status}
-                onChange={handleInputChange}
-              >
-                <option value="">Select status</option>
-                <option value="average">Average</option>
-                <option value="appalling">Appalling</option>
-                <option value="optimal">Optimal</option>
-              </CFormSelect>
-              <CFormLabel htmlFor="conservation_status">Conservation status:</CFormLabel>
-              <CFormSelect
-                id="conservation_status"
-                name="conservation_status"
-                value={formData.conservation_status}
-                onChange={handleInputChange}
-              >
-                <option value="">Select conservation status</option>
-                <option value="inoperative">Inoperative</option>
-                <option value="operational">Operational</option>
-              </CFormSelect>
-              <CFormLabel htmlFor="observation">Observation</CFormLabel>
-              <CFormInput
-                type="text"
-                id="observation"
-                name="observation"
-                placeholder="Observation"
-                value={formData.observation}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="physical_location">Physical location</CFormLabel>
-              <CFormInput
-                type="text"
-                id="physical_location"
-                name="physical_location"
-                placeholder="Physical location"
-                value={formData.physical_location}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="direction_dependency">Direction dependency</CFormLabel>
-              <CFormInput
-                type="text"
-                id="direction_dependency"
-                name="direction_dependency"
-                placeholder="Direction dependency"
-                value={formData.direction_dependency}
-                onChange={handleInputChange}
-              ></CFormInput>
-              <CFormLabel htmlFor="level">Level</CFormLabel>
-              <CFormInput
-                type="text"
-                id="level"
-                name="level"
-                placeholder="Level"
-                value={formData.level}
-                onChange={handleInputChange}
-              ></CFormInput>
-
-              <CFormLabel htmlFor="analyst">Analyst</CFormLabel>
-              <CFormInput
-                type="text"
-                id="analyst"
-                name="analyst"
-                placeholder="Analyst"
-                value={formData.analyst}
-                onChange={handleInputChange}
-              ></CFormInput>
-
-              <CFormLabel htmlFor="acquisition_date">acquisition date</CFormLabel>
-              <CFormInput
-                type="date"
-                id="acquisition_date"
-                name="acquisition_date"
-                placeholder="acquisition_date"
-                value={formData.acquisition_date}
-                onChange={handleInputChange}
-              ></CFormInput>
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-100">
+                    <CFormLabel>Type</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilOptions} />
+                      </CInputGroupText>
+                      <CFormSelect
+                        id="type"
+                        name="type"
+                        value={formData.type}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">Select the asset type</option>
+                        <option value="furniture">Furniture</option>
+                        <option value="vehicles">Vehicles</option>
+                        <option value="equipment">Equipment</option>
+                      </CFormSelect>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
             </CForm>
           </CModalBody>
           <CModalFooter className="Modal-footer">
-            <CButton className="buttom-footer" onClick={() => handleSubmit()}>
+            <CButton
+              className="buttom-footer"
+              onClick={() => {
+                Setmodal0(false)
+                if (formData.type === 'furniture') {
+                  Setmodal1(true)
+                }
+                if (formData.type === 'vehicles') {
+                  Setmodal2(true)
+                }
+                if (formData.type === 'equipment') {
+                  Setmodal3(true)
+                }
+              }}
+            >
+              Continue
+            </CButton>
+            <CButton
+              className="buttom-footer"
+              onClick={() => {
+                Setmodal0(false)
+              }}
+            >
+              Cancel
+            </CButton>
+          </CModalFooter>
+        </CModal>
+
+        {/*Modal 1 de furniture -------------------------------------------------------------------------------------------------------------*/}
+
+        <CModal visible={modal1} onClose={() => Setmodal1(false)}>
+          <CModalHeader className="Modal-header">Add new asset :furniture</CModalHeader>
+          <CModalBody>
+            <CForm>
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-100">
+                    <CFormLabel>Clasification:</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="classification"
+                        name="classification"
+                        placeholder="Clasification"
+                        value={formData.classification}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Description</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilCommentSquare} />
+                      </CInputGroupText>
+                      <CFormTextarea
+                        type="text"
+                        id="description"
+                        name="description"
+                        placeholder="Description"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                      ></CFormTextarea>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Color:</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="color"
+                        name="color"
+                        placeholder="Color"
+                        value={formData.color}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Brand</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="brand"
+                        name="brand"
+                        placeholder="Brand"
+                        value={formData.brand}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Model</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="model"
+                        name="model"
+                        placeholder="Model"
+                        value={formData.model}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Serial</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="serial"
+                        name="serial"
+                        placeholder="Serial"
+                        value={formData.serial}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Height</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="number"
+                        id="height"
+                        name="height"
+                        placeholder="Height"
+                        value={formData.height}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Width</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="number"
+                        id="width"
+                        name="width"
+                        placeholder="Width"
+                        value={formData.width}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Depth</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="number"
+                        id="depth"
+                        name="depth"
+                        placeholder="Depth"
+                        value={formData.depth}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Acquisition value</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="number"
+                        id="acquisition_value"
+                        name="acquisition_value"
+                        placeholder="Acquisition value"
+                        value={formData.acquisition_value}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Use status</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilOptions} />
+                      </CInputGroupText>
+                      <CFormSelect
+                        id="use_status"
+                        name="use_status"
+                        value={formData.use_status}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">Select status</option>
+                        <option value="average">Average</option>
+                        <option value="appalling">Appalling</option>
+                        <option value="optimal">Optimal</option>
+                      </CFormSelect>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Conservation status</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilOptions} />
+                      </CInputGroupText>
+                      <CFormSelect
+                        id="conservation_status"
+                        name="conservation_status"
+                        value={formData.conservation_status}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">Select conservation status</option>
+                        <option value="inoperative">Inoperative</option>
+                        <option value="operational">Operational</option>
+                      </CFormSelect>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Observation</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="observation"
+                        name="observation"
+                        placeholder="Observation"
+                        value={formData.observation}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Physical location</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="physical_location"
+                        name="physical_location"
+                        placeholder="Physical location"
+                        value={formData.physical_location}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Direction dependency</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="direction_dependency"
+                        name="direction_dependency"
+                        placeholder="Direction dependency"
+                        value={formData.direction_dependency}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Level</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="level"
+                        name="level"
+                        placeholder="Level"
+                        value={formData.level}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Analyst</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="analyst"
+                        name="analyst"
+                        placeholder="Analyst"
+                        value={formData.analyst}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-100">
+                    <CFormLabel>Acquisition date</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilCalendar} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="date"
+                        id="acquisition_date"
+                        name="acquisition_date"
+                        placeholder="acquisition_date"
+                        value={formData.acquisition_date}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+            </CForm>
+          </CModalBody>
+          <CModalFooter className="Modal-footer">
+            <CButton
+              className="buttom-footer"
+              onClick={() => {
+                if (isEditMode) {
+                  Putasset(editAssetId)
+                } else {
+                  Postasset()
+                }
+                Setmodal1(false)
+              }}
+            >
               Save
             </CButton>
-            <CButton className="buttom-footer" onClick={() => setOpenModal(false)}>
+            <CButton
+              className="buttom-footer"
+              onClick={() => {
+                Setmodal1(false)
+                setIsEditMode(false)
+                setEditAssetId(null)
+              }}
+            >
+              Cancel
+            </CButton>
+          </CModalFooter>
+        </CModal>
+
+        {/*Modal 2 de vehicle -------------------------------------------------------------------------------------------------------------*/}
+
+        <CModal
+          visible={modal2}
+          onClose={() => {
+            Setmodal2(false)
+          }}
+        >
+          <CModalHeader className="Modal-header">Add new asset : Vehicle</CModalHeader>
+          <CModalBody>
+            <CForm>
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Plate</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="plate"
+                        name="plate"
+                        placeholder="Plate"
+                        value={formData.plate}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Bodywork</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="bodywork"
+                        name="bodywork"
+                        placeholder="Bodywork"
+                        value={formData.bodywork}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Engine</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="engine"
+                        name="engine"
+                        placeholder="Engine"
+                        value={formData.engine}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>year of the vehicle</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="number"
+                        id="year_of_the_vehicle"
+                        name="year_of_the_vehicle"
+                        placeholder="Year of the vehicle"
+                        value={formData.year_of_the_vehicle}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-100">
+                    <CFormLabel>Clasification:</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="classification"
+                        name="classification"
+                        placeholder="Clasification"
+                        value={formData.classification}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Description</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilCommentSquare} />
+                      </CInputGroupText>
+                      <CFormTextarea
+                        type="text"
+                        id="description"
+                        name="description"
+                        placeholder="Description"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                      ></CFormTextarea>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Color:</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="color"
+                        name="color"
+                        placeholder="Color"
+                        value={formData.color}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Brand</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="brand"
+                        name="brand"
+                        placeholder="Brand"
+                        value={formData.brand}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Model</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="model"
+                        name="model"
+                        placeholder="Model"
+                        value={formData.model}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Serial</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="serial"
+                        name="serial"
+                        placeholder="Serial"
+                        value={formData.serial}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Height</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="number"
+                        id="height"
+                        name="height"
+                        placeholder="Height"
+                        value={formData.height}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-100">
+                    <CFormLabel>Width</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="number"
+                        id="width"
+                        name="width"
+                        placeholder="Width"
+                        value={formData.width}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Acquisition value</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="number"
+                        id="acquisition_value"
+                        name="acquisition_value"
+                        placeholder="Acquisition value"
+                        value={formData.acquisition_value}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Use status</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilOptions} />
+                      </CInputGroupText>
+                      <CFormSelect
+                        id="use_status"
+                        name="use_status"
+                        value={formData.use_status}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">Select status</option>
+                        <option value="average">Average</option>
+                        <option value="appalling">Appalling</option>
+                        <option value="optimal">Optimal</option>
+                      </CFormSelect>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Conservation status</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilOptions} />
+                      </CInputGroupText>
+                      <CFormSelect
+                        id="conservation_status"
+                        name="conservation_status"
+                        value={formData.conservation_status}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">Select conservation status</option>
+                        <option value="inoperative">Inoperative</option>
+                        <option value="operational">Operational</option>
+                      </CFormSelect>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Observation</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="observation"
+                        name="observation"
+                        placeholder="Observation"
+                        value={formData.observation}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Physical location</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="physical_location"
+                        name="physical_location"
+                        placeholder="Physical location"
+                        value={formData.physical_location}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Direction dependency</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="direction_dependency"
+                        name="direction_dependency"
+                        placeholder="Direction dependency"
+                        value={formData.direction_dependency}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Level</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="level"
+                        name="level"
+                        placeholder="Level"
+                        value={formData.level}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Analyst</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="analyst"
+                        name="analyst"
+                        placeholder="Analyst"
+                        value={formData.analyst}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-100">
+                    <CFormLabel>Acquisition date</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilCalendar} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="date"
+                        id="acquisition_date"
+                        name="acquisition_date"
+                        placeholder="acquisition_date"
+                        value={formData.acquisition_date}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+            </CForm>
+          </CModalBody>
+          <CModalFooter className="Modal-footer">
+            <CButton
+              className="buttom-footer"
+              onClick={() => {
+                if (isEditMode) {
+                  Putasset(editAssetId)
+                } else {
+                  Postasset()
+                }
+                Setmodal2(false)
+              }}
+            >
+              Save
+            </CButton>
+            <CButton
+              className="buttom-footer"
+              onClick={() => {
+                Setmodal2(false)
+                setIsEditMode(false)
+                setEditAssetId(null)
+              }}
+            >
+              Cancel
+            </CButton>
+          </CModalFooter>
+        </CModal>
+
+        {/*Modal 3 de equipment -------------------------------------------------------------------------------------------------------------*/}
+
+        <CModal
+          visible={modal3}
+          onClose={() => {
+            Setmodal3(false)
+          }}
+        >
+          <CModalHeader className="Modal-header">Add new asset : Equipment</CModalHeader>
+          <CModalBody>
+            <CForm>
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-100">
+                    <CFormLabel>Clasification:</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="classification"
+                        name="classification"
+                        placeholder="Clasification"
+                        value={formData.classification}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Description</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilCommentSquare} />
+                      </CInputGroupText>
+                      <CFormTextarea
+                        type="text"
+                        id="description"
+                        name="description"
+                        placeholder="Description"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                      ></CFormTextarea>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Color:</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="color"
+                        name="color"
+                        placeholder="Color"
+                        value={formData.color}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Brand</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="brand"
+                        name="brand"
+                        placeholder="Brand"
+                        value={formData.brand}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Model</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="model"
+                        name="model"
+                        placeholder="Model"
+                        value={formData.model}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Serial</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="serial"
+                        name="serial"
+                        placeholder="Serial"
+                        value={formData.serial}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Height</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="number"
+                        id="height"
+                        name="height"
+                        placeholder="Height"
+                        value={formData.height}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Width</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="number"
+                        id="width"
+                        name="width"
+                        placeholder="Width"
+                        value={formData.width}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Depth</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="number"
+                        id="depth"
+                        name="depth"
+                        placeholder="Depth"
+                        value={formData.depth}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Acquisition value</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="number"
+                        id="acquisition_value"
+                        name="acquisition_value"
+                        placeholder="Acquisition value"
+                        value={formData.acquisition_value}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Use status</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilOptions} />
+                      </CInputGroupText>
+                      <CFormSelect
+                        id="use_status"
+                        name="use_status"
+                        value={formData.use_status}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">Select status</option>
+                        <option value="average">Average</option>
+                        <option value="appalling">Appalling</option>
+                        <option value="optimal">Optimal</option>
+                      </CFormSelect>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Conservation status</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilOptions} />
+                      </CInputGroupText>
+                      <CFormSelect
+                        id="conservation_status"
+                        name="conservation_status"
+                        value={formData.conservation_status}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">Select conservation status</option>
+                        <option value="inoperative">Inoperative</option>
+                        <option value="operational">Operational</option>
+                      </CFormSelect>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Observation</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="observation"
+                        name="observation"
+                        placeholder="Observation"
+                        value={formData.observation}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Physical location</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="physical_location"
+                        name="physical_location"
+                        placeholder="Physical location"
+                        value={formData.physical_location}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Direction dependency</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="direction_dependency"
+                        name="direction_dependency"
+                        placeholder="Direction dependency"
+                        value={formData.direction_dependency}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-50">
+                    <CFormLabel>Level</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="level"
+                        name="level"
+                        placeholder="Level"
+                        value={formData.level}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                  <div className="w-50">
+                    <CFormLabel>Analyst</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilPencil} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="text"
+                        id="analyst"
+                        name="analyst"
+                        placeholder="Analyst"
+                        value={formData.analyst}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+
+              <CInputGroup className="mb-3">
+                <div className="d-flex  w-100 gap-3">
+                  <div className="w-100">
+                    <CFormLabel>Acquisition date</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>
+                        <CIcon icon={cilCalendar} />
+                      </CInputGroupText>
+                      <CFormInput
+                        type="date"
+                        id="acquisition_date"
+                        name="acquisition_date"
+                        placeholder="acquisition_date"
+                        value={formData.acquisition_date}
+                        onChange={handleInputChange}
+                      ></CFormInput>
+                    </CInputGroup>
+                  </div>
+                </div>
+              </CInputGroup>
+            </CForm>
+          </CModalBody>
+          <CModalFooter className="Modal-footer">
+            <CButton
+              className="buttom-footer"
+              onClick={() => {
+                if (isEditMode) {
+                  Putasset(editAssetId)
+                } else {
+                  Postasset()
+                }
+                Setmodal3(false)
+              }}
+            >
+              Save
+            </CButton>
+            <CButton
+              className="buttom-footer"
+              onClick={() => {
+                Setmodal3(false)
+                setIsEditMode(false)
+                setEditAssetId(null)
+              }}
+            >
               Cancel
             </CButton>
           </CModalFooter>
@@ -483,34 +1649,8 @@ const Inventory = () => {
               <CButton
                 className="buttom-add"
                 onClick={() => {
-                  setFormData({
-                    id_assets: '',
-                    type: '',
-                    classification: '',
-                    description: '',
-                    color: '',
-                    brand: '',
-                    model: '',
-                    serial: '',
-                    height: '',
-                    width: '',
-                    depth: '',
-                    plate: '',
-                    bodywork: '',
-                    engine: '',
-                    year_of_the_vehicule: '',
-                    acquisition_value: '',
-                    use_status: '',
-                    conservation_status: '',
-                    observation: '',
-                    physical_location: '',
-                    direction_dependency: '',
-                    level: '',
-                    analyst: '',
-                    acquisition_date: '',
-                  })
-                  setIsEditing(false)
-                  setOpenModal(true)
+                  delete_formdata()
+                  Setmodal0(true)
                 }}
               >
                 <CIcon icon={cilPlus} className="buttom-icon" /> Add
@@ -586,7 +1726,7 @@ const Inventory = () => {
                         <CTableDataCell>{item.level}</CTableDataCell>
                         <CTableDataCell>{item.analyst}</CTableDataCell>
                         <CTableDataCell>
-                          <CButton className="box-icon" onClick={() => Putasset(item.id_assets)}>
+                          <CButton className="box-icon" onClick={() => handleEditAsset(item)}>
                             <CIcon icon={cilPencil} className="text-info" />
                           </CButton>
                         </CTableDataCell>
