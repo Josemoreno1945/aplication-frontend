@@ -124,6 +124,9 @@ const Inventory = () => {
     })
   }
 
+  const [RegisterModalVisible, setRegisterModalVisible] = useState(false)
+  const [Registermsg, setRegistermsg] = useState('')
+
   const [inventory, setInventory] = useState([])
   const [deleteitemid, setDeleteitemid] = useState('')
   const [mvisible, setMvisible] = useState(false)
@@ -253,6 +256,8 @@ const Inventory = () => {
         },
       })
       Getasset()
+      setmsgEditModal(true)
+      setmessageEdit(response.data.message)
       setIsEditMode(false)
       setEditAssetId(null)
       Setmodal1(false)
@@ -308,6 +313,8 @@ const Inventory = () => {
       setInventory(response.data)
       Getasset()
       delete_formdata()
+      setRegistermsg(response.data.message)
+      setRegisterModalVisible(true)
     } catch (err) {
       console.error('Error al registrar asset:', err)
       let msg
@@ -329,6 +336,32 @@ const Inventory = () => {
 
   return (
     <>
+      <CModal visible={msgEditModal} onClose={() => setmsgEditModal(false)}>
+        <CModalBody>
+          <div>{String(messageEdit)}</div>
+        </CModalBody>
+        <CModalFooter>
+          <div className="button-box">
+            <CButton className="button-register" onClick={() => setmsgEditModal(false)}>
+              Cerrar
+            </CButton>
+          </div>
+        </CModalFooter>
+      </CModal>
+
+      <CModal visible={RegisterModalVisible} onClose={() => setRegisterModalVisible(false)}>
+        <CModalBody>
+          <div>{Registermsg}</div>
+        </CModalBody>
+        <CModalFooter>
+          <div className="button-box">
+            <CButton className="button-register" onClick={() => setRegisterModalVisible(false)}>
+              Cerrar
+            </CButton>
+          </div>
+        </CModalFooter>
+      </CModal>
+
       <CModal visible={errorModalVisible} onClose={() => setErrorModalVisible(false)}>
         <CModalHeader>Error</CModalHeader>
         <CModalBody>
