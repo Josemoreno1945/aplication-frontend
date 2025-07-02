@@ -729,6 +729,7 @@
       "adress": "Zona Industrial, Táchira, Venezuela",
       "department": "Security",
       "status": "Active"
+
     },
     {
       "id": "b677",
@@ -748,6 +749,7 @@
       "Username": "john.smith",
       "department": "Technology",
       "report": "Computer damaged, monitor failure"
+
     }
   ]
 }

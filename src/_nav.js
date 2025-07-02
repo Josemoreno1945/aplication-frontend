@@ -24,20 +24,43 @@ const _nav = [
     name: 'Dashboard',
     to: '/dashboard',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    badge: {
-
-    },
+    badge: {},
   },
+
   {
     component: CNavTitle,
     name: 'Management',
   },
+
+  {
+    component: CNavGroup,
+    name: 'Departments',
+    to: '/buttons',
+    icon: <CIcon icon={cilHouse} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Register',
+        to: '/components/register_dpt',
+      },
+      {
+        component: CNavItem,
+        name: 'List',
+        to: '/management/Departments',
+      },
+    ],
+  },
+
+  
+
   {
     component: CNavItem,
     name: 'Departments',
     to: '/management/Departments',
     icon: <CIcon icon={cilHouse} customClassName="nav-icon" />,
   },
+
+  
   {
     component: CNavItem,
     name: 'Users',
@@ -48,8 +71,10 @@ const _nav = [
     component: CNavItem,
     name: 'Reports',
     to: '/components/reports',
-    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />
+    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
   },
+
+  /*
   {
     component: CNavItem,
     name: 'Register',
@@ -464,7 +489,9 @@ const _nav = [
     href: 'https://coreui.io/react/docs/templates/installation/',
     icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
   },
-  
+
+  */
+
 ]
 
 export default _nav

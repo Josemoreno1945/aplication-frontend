@@ -77,7 +77,7 @@
 }
 
 .c_list{
-    width: 85%;
+    width: 100%;
 }
 
 .conteiner{
@@ -146,3 +146,21 @@
     position: relative;
     left: 25%;
 }
+
+
+.card-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+
+.box-icon{
+    transform:scale(1.2);
+    &:hover{
+        transition: 0.5s;
+        transform: scale(1.4);
+    }
+    
+}
+

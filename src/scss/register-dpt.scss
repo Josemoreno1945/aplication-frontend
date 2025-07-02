@@ -1,0 +1,30 @@
+.button-register {
+    background-color: #756f6c;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 15px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 20px; 
+    transition: 0.3s;
+
+    &:hover {
+        background-color: #756f6c;
+        color: white;
+        transform: scale(1.10);
+    }
+}
+
+.button-box{
+    display: flex;
+    justify-content: center;
+
+}
+
+.ccard-box{
+    width: 60%;
+    margin:  auto;
+    display: flex;
+    justify-content: center;
+}

@@ -1,16 +1,20 @@
-import { cilReportSlash } from '@coreui/icons'
 import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 //----------------------------------------------------------------------------
-const Users= React.lazy(() => import('./views/management/Users/users'))
+
+const users = React.lazy(() => import('src/views/management/Users/users.js'))
+const reports = React.lazy(() => import('./components/reports'))
 
 
-const reports= React.lazy(() => import('./components/reports'))
-const Departments= React.lazy(() => import('src/views/management/departments/departments.js'))
+const Departments = React.lazy(() => import('../src/views/management/Departments/departments.js'))
 
+
+const Inventory = React.lazy(() => import('./components/Inventory.js'))
+
+const register_dpt = React.lazy(() => import('./components/register-departments.js'))
 
 // Base
 const Accordion = React.lazy(() => import('./views/base/accordion/Accordion'))
@@ -106,9 +110,21 @@ const routes = [
   { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
   { path: '/widgets', name: 'Widgets', element: Widgets },
   //------------------------------------------------------------------------------
-  { path: '/management/Departments', name: 'Departments', element: Departments , exact: true },
-  { path: '/components/reports', name: 'reports', element: reports , exact: true },
+
+ 
   { path: '/management/Users', name: 'Management', element: Users , exact: true }
+
+  { path: '/management/Departments', name: 'Departments', element: Departments, exact: true },
+
+  { path: '/components/reports', name: 'reports', element: reports, exact: true },
+
+  {
+    path: '/management/Departments/inventory/:departmentId',
+    name: 'Inventory',
+    element: Inventory,
+  },
+
+  { path: '/components/register_dpt', name: 'register_dpt', element: register_dpt },
 ]
 
 export default routes
