@@ -109,7 +109,7 @@ const routes = [
   { path: '/widgets', name: 'Widgets', element: Widgets },
   //------------------------------------------------------------------------------
 
-  { path: '/management/Users', name: 'Management', element: Users, exact: true },
+  { path: '/management/Users', name: 'Management', element: users, exact: true },
 
   { path: '/management/Departments', name: 'Departments', element: Departments, exact: true },
 
