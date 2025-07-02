@@ -56,8 +56,7 @@ const accept=() => {
                          value={formData.Username}
                          name='Username'
                          required
-                        onChange={ImputChangeData}/>
-                        
+                        onChange={ImputChangeData}/>  
                     </CInputGroup>
                     <CInputGroup>
                     <CInputGroupText>

@@ -108,7 +108,7 @@ const routes = [
   //------------------------------------------------------------------------------
   { path: '/management/Departments', name: 'Departments', element: Departments , exact: true },
   { path: '/components/reports', name: 'reports', element: reports , exact: true },
-
+  { path: '/management/Users', name: 'Management', element: Users , exact: true }
 ]
 
 export default routes

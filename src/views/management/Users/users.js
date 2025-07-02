@@ -1,14 +1,14 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { CRow, CCol, CCard, CCardHeader, CCardBody,CButton,CModal,CModalBody,CModalHeader,CModalFooter,CForm, CFormInput, CFormLabel, CFormSelect,
-    CTable,CTableHead,CTableRow,CTableHeaderCell,CTableBody} from '@coreui/react'
+    CTable,CTableHead,CTableRow,CTableHeaderCell,CTableBody, CTableDataCell} from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilListNumbered, cilPlus, cibDropbox, cilSearch, cilPencil, cilX} from '@coreui/icons'
 import "src/scss/edit.scss"
 import axios from 'axios';
-import "src/scss/departments.scss"
 
 
-const Users = () => {s
+
+const Users = () => {
 
     const [isEditing,setIsEditing] = useState(false)
     const [userid, setuserid] = useState(null)
@@ -18,7 +18,7 @@ const Users = () => {s
     const [users, setusers] = useState([ ])
 
     useEffect(() => {
-        axios.get("http://localhost:5000/user")
+        axios.get("http://localhost:5000/users")
           .then(response => setusers(response.data))
           .catch(error => console.error("Error al obtener datos", error));
       }, []);
@@ -31,20 +31,18 @@ const Users = () => {s
             filtroUsuario=users
         }else{
             filtroUsuario=users.filter((user) =>
-                user.first_name?.toLowerCase().includes(search.toLowerCase())||
-                user.last_name?.toLowerCase().includes(search.toLowerCase())||
-                user.username?.toLowerCase().includes(search.toLowerCase())||
-                user.rol?.toLowerCase().includes(search.toLowerCase())||
-                user.email?.toLowerCase().includes(search.toLowerCase())||
-                user.phone?.toLowerCase().includes(search.toLowerCase())||
-                user.address?.toLowerCase().includes(search.toLowerCase())||
-                user.department?.toLowerCase().includes(search.toLowerCase())||
-                user.status?.toLowerCase().includes(search.toLowerCase())
+                user.first_name.toLowerCase().includes(search.toLowerCase())||
+                user.last_name.toLowerCase().includes(search.toLowerCase())||
+                user.username.toLowerCase().includes(search.toLowerCase())||
+                user.rol.toLowerCase().includes(search.toLowerCase())||
+                user.email.toLowerCase().includes(search.toLowerCase())||
+                user.phone.toLowerCase().includes(search.toLowerCase())||
+                user.address.toLowerCase().includes(search.toLowerCase())||
+                user.department.toLowerCase().includes(search.toLowerCase())||
+                user.status.toLowerCase().includes(search.toLowerCase())
         );
         }
     
-
-  
 
       const Editregister = (index) => {
         setupdateuser(users[index]) //accedo al user elegido 
@@ -53,7 +51,7 @@ const Users = () => {s
         setModalVisible(true) //muestra el modal o mejor dicho el formulario
       }
 
-      const handleSve = () => {
+      const handleSave = () => {
         if (userid !== null) {
           const updatedUsers = [...users]
           updatedUsers[userid] = updateuser // actualiza el user en la posicion correspondiente

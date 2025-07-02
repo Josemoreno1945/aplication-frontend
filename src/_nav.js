@@ -59,9 +59,8 @@ const _nav = [
     component:CNavItem,
     name:'Login',
     to:'/login',
-  }
-
-  /*
+  },
+  
   {
     component: CNavTitle,
     name: 'Components',
@@ -465,7 +464,7 @@ const _nav = [
     href: 'https://coreui.io/react/docs/templates/installation/',
     icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
   },
-  */
+  
 ]
 
 export default _nav
