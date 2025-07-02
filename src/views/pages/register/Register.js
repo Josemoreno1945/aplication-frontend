@@ -20,15 +20,17 @@ import { href } from 'react-router-dom'
 
 const Register = () => {
 
-const [formData, setFormData]=useState([
+const [formData, setFormData]=useState(
   {
     first_name:"",
     last_name:"",
     username:"",
     password:"",
-    email:""
+    email:"",
+    phone:"",
+    department:"",
   }
-])
+)
 
 const ImputChangeData = (e) => {
   const {name, value} = e.target
@@ -70,16 +72,19 @@ const savebutton=() => {
                       type="text"
                       placeholder="Fist Name"
                       value={formData.first_name}
+                      name='first_name'
                       onChange={ImputChangeData}
                     />
                     <CFormInput
                       type="text"
                       placeholder="Last Name"
                       value={formData.last_name}
+                      name='last_name'
                       onChange={ImputChangeData}
                     />
                     <CFormInput placeholder="Username" autoComplete="username" 
                      value={formData.username}
+                     name='username'
                     onChange={ImputChangeData}
                     />
                   </CInputGroup>
@@ -93,7 +98,21 @@ const savebutton=() => {
                     </CInputGroupText>
                     <CFormInput placeholder="Email" autoComplete="email"
                       value={formData.email}
+                      name='email'
                       onChange={ImputChangeData} />
+                    <CFormInput
+                    type="number"
+                    placeholder="Phone" autoComplete="phone"
+                      value={formData.phone}
+                      name='phone'
+                      onChange={ImputChangeData} />
+                      <CFormInput
+                      type="text"
+                      placeholder="Department"
+                      value={formData.department}
+                      name='department'
+                      onChange={ImputChangeData}
+                    />
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
@@ -108,22 +127,8 @@ const savebutton=() => {
                       type="password"
                       placeholder="Password"
                       autoComplete="new-password"
-                    />
-                  </CInputGroup>
-                  <CInputGroup className="mb-4">
-                    <CInputGroupText>
-                      <CIcon
-                        icon={cilLockLocked}
-                        style={{
-                          color: '#b66c47',
-                        }}
-                      />
-                    </CInputGroupText>
-                    <CFormInput
-                      type="password"
-                      placeholder="Repeat password"
-                      autoComplete="new-password"
                       value={formData.password}
+                      name='password'
                       onChange={ImputChangeData}
                     />
                   </CInputGroup>

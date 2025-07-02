@@ -25,3 +25,39 @@
     background-color: #86543b;
     color: white;
 }
+
+.Modal-header{
+    background-color:#8f5a40;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    color: white;
+}
+
+.buttom-accept{
+    background-color: #756f6c;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 15px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 20px; 
+    transition: 0.3s;
+
+    &:hover {
+        background-color: #756f6c;
+        color: white;
+        transform: scale(1.10);
+    }
+}
+
+.box-buttom-accept{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.label-delete{
+    position: relative;
+    left: 25%;
+}

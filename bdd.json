@@ -729,6 +729,27 @@
       "adress": "Zona Industrial, Táchira, Venezuela",
       "department": "Security",
       "status": "Active"
+
+    },
+    {
+      "id": "b677",
+      "first_name": "Maria",
+      "last_name": "Sierra",
+      "username": "mariasierra",
+      "password": "123456",
+      "email": "majosierra.2004@gmail.com",
+      "phone": "123456",
+      "department": "Administracion"
+    }
+  ],
+  "reports": [
+    {},
+    {
+      "id": "7b90",
+      "Username": "john.smith",
+      "department": "Technology",
+      "report": "Computer damaged, monitor failure"
+
     }
   ]
 }
