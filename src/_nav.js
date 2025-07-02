@@ -51,6 +51,25 @@ const _nav = [
     ],
   },
 
+  {
+    component: CNavGroup,
+    name: 'Users',
+    to: '/buttons',
+    icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Register',
+        to: '/components/register_user',
+      },
+      {
+        component: CNavItem,
+        name: 'List',
+        to: '/management/Users',
+      },
+    ],
+  },
+
   
 
   {
@@ -61,12 +80,8 @@ const _nav = [
   },
 
   
-  {
-    component: CNavItem,
-    name: 'Users',
-    to: '/management/users',
-    icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
-  },
+
+
   {
     component: CNavItem,
     name: 'Reports',

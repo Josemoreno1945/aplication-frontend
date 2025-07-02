@@ -15,110 +15,158 @@ import {
   CModalHeader,
   CRow,
   CModalBody,
-  CModalFooter
+  CModalFooter,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import fondo1 from '../../../assets/images/fondo1.jpg'
-import "src/scss/login.scss"
+import 'src/scss/login.scss'
+import axios from 'axios'
 
-
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
+  const navigate = useNavigate()
 
-  const [forgotvisible,Setforgotvisible]=useState(false)
+  const [formData, setFormData] = useState({
+    user_name: '',
+    password: '',
+  })
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }))
+  }
+
+  const [forgotvisible, Setforgotvisible] = useState(false)
+
+  const postLogin = async () => {
+    try {
+      console.log('aaa')
+      const response = await axios.post('http://localhost:4000/login', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      localStorage.setItem('token', response.data.token)
+      navigate('/dashboard')
+    } catch (err) {
+      console.error('Login failed:', err)
+    }
+  }
 
   return (
-<>
-
-    <div style={{
-      backgroundColor: '#7d4b45',
-      backgroundImage: `url(${fondo1})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center'}} className="min-vh-100 d-flex flex-row align-items-center">
-      <CContainer>
-        <CRow className="justify-content-center">
-          <CCol md={8}>
-            <CCardGroup>
-              <CCard style={{backgroundColor: 'white'}} className="p-4">
-                <CCardBody>
-                  <CForm>
-                    <h1>Login</h1>
-                    <p className="text-body-secondary">Sign In to your account</p>
-                    <CInputGroup className="mb-3">
-                      <CInputGroupText>
-                        <CIcon icon={cilUser} style={{
-                          color: '#b66c47'
-                        }} />
-                      </CInputGroupText>
-                      <CFormInput type="email" placeholder="Email" autoComplete="email" />
-                    </CInputGroup>
-                    <CInputGroup className="mb-4">
-                      <CInputGroupText>
-                        <CIcon icon={cilLockLocked} style={{
-                          color: '#b66c47'
-                        }} />
-                      </CInputGroupText>
-                      <CFormInput
-                        type="password"
-                        placeholder="Password"
-                        autoComplete="current-password"
-                      />
-                    </CInputGroup>
-                    <CRow>
-                      <CCol xs={6}>
-                        <CButton className="button_login">
-                          Login
-                        </CButton>
-                      </CCol>
-                      <CCol xs={6} className="text-right">
-                        <CButton className="button_olvido" onClick={() => Setforgotvisible(true)}>
-                          Forgot password?
-                        </CButton>
-                      </CCol>
-                       <CModal visible={forgotvisible} onClose={()=>Setforgotvisible(false)}>
+    <>
+      <div
+        style={{
+          backgroundColor: '#7d4b45',
+          backgroundImage: `url(${fondo1})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+        className="min-vh-100 d-flex flex-row align-items-center"
+      >
+        <CContainer>
+          <CRow className="justify-content-center">
+            <CCol md={8}>
+              <CCardGroup>
+                <CCard style={{ backgroundColor: 'white' }} className="p-4">
+                  <CCardBody>
+                    <CForm>
+                      <h1>Login</h1>
+                      <p className="text-body-secondary">Sign In to your account</p>
+                      <CInputGroup className="mb-3">
+                        <CInputGroupText>
+                          <CIcon
+                            icon={cilUser}
+                            style={{
+                              color: '#b66c47',
+                            }}
+                          />
+                        </CInputGroupText>
+                        <CFormInput
+                          type="text"
+                          placeholder="User Name"
+                          name="user_name"
+                          onChange={handleInputChange}
+                        />
+                      </CInputGroup>
+                      <CInputGroup className="mb-4">
+                        <CInputGroupText>
+                          <CIcon
+                            icon={cilLockLocked}
+                            style={{
+                              color: '#b66c47',
+                            }}
+                          />
+                        </CInputGroupText>
+                        <CFormInput
+                          type="password"
+                          placeholder="Password"
+                          name="password"
+                          onChange={handleInputChange}
+                        />
+                      </CInputGroup>
+                      <CRow>
+                        <CCol xs={6}>
+                          <CButton
+                            className="button_login"
+                            onClick={() => {
+                              postLogin()
+                            }}
+                          >
+                            Login
+                          </CButton>
+                        </CCol>
+                        <CCol xs={6} className="text-right">
+                          <CButton className="button_olvido" onClick={() => Setforgotvisible(true)}>
+                            Forgot password?
+                          </CButton>
+                        </CCol>
+                        <CModal visible={forgotvisible} onClose={() => Setforgotvisible(false)}>
                           <CModalHeader>Forgot password</CModalHeader>
                           <CModalBody>
                             <CForm>
                               <p>Please enter your email and we will send you a code</p>
                               <CInputGroup className="mb-3">
-                      <CInputGroupText>
-                        <CIcon icon={cilUser} style={{
-                          color: '#b66c47'
-                        }} />
-                      </CInputGroupText>
-                      <CFormInput type="email" placeholder="Email" autoComplete="email" />
-                        </CInputGroup>
+                                <CInputGroupText>
+                                  <CIcon
+                                    icon={cilUser}
+                                    style={{
+                                      color: '#b66c47',
+                                    }}
+                                  />
+                                </CInputGroupText>
+                                <CFormInput type="email" placeholder="Email" autoComplete="email" />
+                              </CInputGroup>
                             </CForm>
-                            </CModalBody>
-                            <CModalFooter>
-                                <CButton className="button_login">
-                                Accept
-                                </CButton>
-                            </CModalFooter>
-                              </CModal>
-                      <div className='text-center mt-0'>
-                        <p className='mb-0'>Create an account</p>
-                        <CCol className='text-center mt-3'>
-                          <Link to="/register">
-                        <CButton className="button_registro" >
-                          Register now!
-                        </CButton>
-                        </Link>
-                      </CCol>
-                      </div>
-                    </CRow>
-                  </CForm>
-                </CCardBody>
-              </CCard>
-            </CCardGroup>
-          </CCol>
-        </CRow>
-      </CContainer>
-    </div>
+                          </CModalBody>
+                          <CModalFooter>
+                            <CButton className="button_login">Accept</CButton>
+                          </CModalFooter>
+                        </CModal>
+                        <div className="text-center mt-0">
+                          <p className="mb-0">Create an account!</p>
+                          <CCol className="text-center mt-3">
+                            <Link to="/register">
+                              <CButton className="button_registro">Register now!</CButton>
+                            </Link>
+                          </CCol>
+                        </div>
+                      </CRow>
+                    </CForm>
+                  </CCardBody>
+                </CCard>
+              </CCardGroup>
+            </CCol>
+          </CRow>
+        </CContainer>
+      </div>
     </>
   )
 }
-
 
 export default Login
