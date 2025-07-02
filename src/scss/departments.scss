@@ -18,6 +18,25 @@
     }
 }
 
+.pdfgenerate{
+    background-color: #892525;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 15px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 20px; 
+    transition: 0.3s;
+
+    &:hover {
+        background-color: #686868;
+        color: white;
+        transform: scale(1.10);
+    }
+}
+
 .button-close {
     background-color: #756f6c;
     color: white;
