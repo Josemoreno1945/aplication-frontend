@@ -315,6 +315,9 @@ const Inventory = () => {
       delete_formdata()
       setRegistermsg(response.data.message)
       setRegisterModalVisible(true)
+      Setmodal1(false)
+      Setmodal2(false)
+      Setmodal3(false)
     } catch (err) {
       console.error('Error al registrar asset:', err)
       let msg
@@ -330,7 +333,6 @@ const Inventory = () => {
       }
       setErrorMessage(msg)
       setErrorModalVisible(true)
-      setOpenModal(false)
     }
   }
 
@@ -832,7 +834,6 @@ const Inventory = () => {
                 } else {
                   Postasset()
                 }
-                Setmodal1(false)
               }}
             >
               Save
@@ -1272,7 +1273,6 @@ const Inventory = () => {
                 } else {
                   Postasset()
                 }
-                Setmodal2(false)
               }}
             >
               Save
@@ -1654,7 +1654,6 @@ const Inventory = () => {
                 } else {
                   Postasset()
                 }
-                Setmodal3(false)
               }}
             >
               Save

@@ -52,6 +52,7 @@ const _nav = [
   },
 
   {
+
     component: CNavGroup,
     name: 'Users',
     to: '/buttons',
@@ -72,14 +73,10 @@ const _nav = [
 
   
 
-  {
-    component: CNavItem,
-    name: 'Departments',
-    to: '/management/Departments',
-    icon: <CIcon icon={cilHouse} customClassName="nav-icon" />,
-  },
+
 
   
+
 
 
   {
@@ -506,7 +503,6 @@ const _nav = [
   },
 
   */
-
 ]
 
 export default _nav
