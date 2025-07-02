@@ -73,26 +73,6 @@ const Departments = () => {
     setFormData({ ...formData, [name]: value }) //deja todos los valores de formdata pero dejando el nuevo valor , osea por eso el name , eso variaria , puede ser name , addres etc
   }
 
-  //--------------------------------------------------------------------------------------------
-  /*
-  let filteredDepartment = [] //let para que pueda cambiar los valores , aqui inicializo un vector vacio
-
-  if (search === '') {
-    filteredDepartment = departments //si no hay nada en el buscador , o mejor dicho en el vector, muestra todos los dpt
-  } else {
-    filteredDepartment = departments.filter(
-      (
-        dpt, //y si si lo hay , filtro , por categorias , o etiquetas
-      ) =>
-        dpt.name.toLowerCase().includes(search.toLowerCase()) ||
-        dpt.address.toLowerCase().includes(search.toLowerCase()) || //reviso si el nombre , esta incluido en el vector search , osea si dpt manolito es igual a dpt manolito pero en el vector search
-        dpt.phone.toLowerCase().includes(search.toLowerCase()) ||
-        dpt.email.toLowerCase().includes(search.toLowerCase()) ||
-        dpt.operational_status.toLowerCase().includes(search.toLowerCase()),
-    )
-  }
-*/
-
   //GET PARA DEPARTAMENTOS --------------------------------------------------------------------------------
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -118,6 +98,31 @@ const Departments = () => {
         })
         .then((response) => setDepartments(response.data))
     } catch {
+      console.error('Error al obtener datos', error)
+    }
+  }
+
+  //pdf get  ---------------------------------------------------------------------------------
+  const getPDF = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.get('http://localhost:4000/dpt_pdf', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: 'blob',
+      })
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url = window.URL.createObjectURL(blob)
+
+      const link = document.createElement('a')
+      link.href = url
+      link.download = 'lista_departamentos.pdf'
+      link.click()
+
+      // Limpieza opcional
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
       console.error('Error al obtener datos', error)
     }
   }
@@ -365,6 +370,16 @@ const Departments = () => {
         <CCard className="c_list">
           <CCardHeader className="card-header">
             <div>Management Departments</div>
+            <div>
+              <CButton
+                className="pdfgenerate"
+                onClick={() => {
+                  getPDF()
+                }}
+              >
+                Generate Pdf
+              </CButton>
+            </div>
           </CCardHeader>
           <CCardBody>
             <div className="table-responsive">
