@@ -40,6 +40,9 @@ import {
 } from '@coreui/icons'
 import { Navigate, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { PDFDownloadLink } from '@react-pdf/renderer'
+
+import DptPDF from '../../../components/Departments.PDF.js'
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -98,31 +101,6 @@ const Departments = () => {
         })
         .then((response) => setDepartments(response.data))
     } catch {
-      console.error('Error al obtener datos', error)
-    }
-  }
-
-  //pdf get  ---------------------------------------------------------------------------------
-  const getPDF = async () => {
-    try {
-      const token = localStorage.getItem('token')
-      const response = await axios.get('http://localhost:4000/dpt_pdf', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        responseType: 'blob',
-      })
-      const blob = new Blob([response.data], { type: 'application/pdf' })
-      const url = window.URL.createObjectURL(blob)
-
-      const link = document.createElement('a')
-      link.href = url
-      link.download = 'lista_departamentos.pdf'
-      link.click()
-
-      // Limpieza opcional
-      window.URL.revokeObjectURL(url)
-    } catch (error) {
       console.error('Error al obtener datos', error)
     }
   }
@@ -371,14 +349,12 @@ const Departments = () => {
           <CCardHeader className="card-header">
             <div>Management Departments</div>
             <div>
-              <CButton
-                className="pdfgenerate"
-                onClick={() => {
-                  getPDF()
-                }}
+              <PDFDownloadLink
+                document={<DptPDF departments={departments} />}
+                fileName="department_report.pdf"
               >
-                Generate Pdf
-              </CButton>
+                <CButton className="pdfgenerate">Generate pdf</CButton>
+              </PDFDownloadLink>
             </div>
           </CCardHeader>
           <CCardBody>
