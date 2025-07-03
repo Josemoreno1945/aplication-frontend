@@ -324,12 +324,12 @@ const Users = () => {
   const [deleteUser, SetdeleteUser] = useState(null)
 
   const [errorModalVisible, setErrorModalVisible] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMensaje, setErrorMensaje] = useState('')
 
-  const [messageEdit, setmessageEdit] = useState('')
-  const [messageDelete, setmessageDelete] = useState('')
-  const [msgDeleteModal, setmsgDeleteModal] = useState(false)
-  const [msgEditModal, setmsgEditModal] = useState(false)
+  const [mensajeEdit, setmensajeEdit] = useState('')
+  const [mensajeDelete, setmensajeDelete] = useState('')
+  const [mensajeDeleteModal, setmensajeDeleteModal] = useState(false)
+  const [mensajeEditModal, setmensajeEditModal] = useState(false)
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -338,7 +338,7 @@ const Users = () => {
     email: '',
     phone: '',
     address: '',
-    department: '',
+    rol: '',
     status: ''
   })
 
@@ -367,7 +367,7 @@ const Users = () => {
   }
 */
 
-  //GET PARA DEPARTAMENTOS --------------------------------------------------------------------------------
+  //get users
   useEffect(() => {
     const token = localStorage.getItem('token')
     axios
@@ -380,7 +380,7 @@ const Users = () => {
       .catch((error) => console.error('Error al obtener datos', error))
   }, [])
 
-  //GET DE DEPARTAMENTOS COMO FUNCION ----------------------------------------------------------------------
+  //get users funcion
   const getUsers = async () => {
     try {
       const token = localStorage.getItem('token')
@@ -396,7 +396,7 @@ const Users = () => {
     }
   }
 
-  //DELETE DE DEPARTAMENTOS -----------------------------------------------------------------------------------
+  //delete users
 
   const Delete = async (id) => {
     try {
@@ -409,14 +409,14 @@ const Users = () => {
       })
       getUsers()
       setMvisible(false)
-      setmsgDeleteModal(true)
-      setmessageDelete(response.data.message)
+      setmensajeDeleteModal(true)
+      setmensajeDelete(response.data.message)
     } catch (err) {
       console.log('Error al eliminar el User:', err)
     }
   }
 
-  //PUT DE DEPARTAMENTOS --------------------------------------------------------------------------------
+  //put users
 
   const putUsers = async (id) => {
     try {
@@ -429,10 +429,10 @@ const Users = () => {
       })
       getUsers()
       seteditModalVisible(false)
-      setmsgEditModal(true)
-      setmessageEdit(response.data.message)
+      setmensajeEditModal(true)
+      setmensajeEdit(response.data.message)
     } catch (err) {
-      setErrorMessage(err.response.data.error)
+      setErrorMensaje(err.response.data.error)
       setErrorModalVisible(true)
       seteditModalVisible(false)
     }
@@ -440,26 +440,26 @@ const Users = () => {
 
   return (
     <>
-      <CModal visible={msgDeleteModal} onClose={() => setmsgDeleteModal(false)}>
+      <CModal visible={mensajeDeleteModal} onClose={() => setmensajeDeleteModal(false)}>
         <CModalBody>
-          <div>{String(messageDelete)}</div>
+          <div>{String(mensajeDelete)}</div>
         </CModalBody>
         <CModalFooter>
           <div className="button-box">
-            <CButton className="button-register" onClick={() => setmsgDeleteModal(false)}>
+            <CButton className="button-register" onClick={() => setmensajeDeleteModal(false)}>
               Cerrar
             </CButton>
           </div>
         </CModalFooter>
       </CModal>
 
-      <CModal visible={msgEditModal} onClose={() => setmsgEditModal(false)}>
+      <CModal visible={mensajeEditModal} onClose={() => setmensajeEditModal(false)}>
         <CModalBody>
-          <div>{String(messageEdit)}</div>
+          <div>{String(mensajeEdit)}</div>
         </CModalBody>
         <CModalFooter>
           <div className="button-box">
-            <CButton className="button-register" onClick={() => setmsgEditModal(false)}>
+            <CButton className="button-register" onClick={() => setmensajeEditModal(false)}>
               Cerrar
             </CButton>
           </div>
@@ -469,7 +469,7 @@ const Users = () => {
       <CModal visible={errorModalVisible} onClose={() => setErrorModalVisible(false)}>
         <CModalHeader>Error</CModalHeader>
         <CModalBody>
-          <div>{String(errorMessage)}</div>
+          <div>{String(errorMensaje)}</div>
         </CModalBody>
         <CModalFooter>
           <div className="button-box">
@@ -590,38 +590,6 @@ const Users = () => {
                     </CInputGroup>
                   </div>
                   <div className="w-50">
-                    <CFormLabel>Phone:</CFormLabel>
-                    <CInputGroup>
-                      <CInputGroupText>
-                        <CIcon icon={cilEnvelopeClosed} />
-                      </CInputGroupText>
-                      <CFormInput
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        placeholder="Phone number"
-                        value={formData.phone}
-                        onChange={InputChangedata}
-                      ></CFormInput>
-                    </CInputGroup>
-                  </div>
-                  <div className="w-50">
-                    <CFormLabel>Department:</CFormLabel>
-                    <CInputGroup>
-                      <CInputGroupText>
-                        <CIcon icon={cilEnvelopeClosed} />
-                      </CInputGroupText>
-                      <CFormInput
-                        type="text"
-                        id="department"
-                        name="departmet"
-                        placeholder="Department"
-                        value={formData.department}
-                        onChange={InputChangedata}
-                      ></CFormInput>
-                    </CInputGroup>
-                  </div>
-                  <div className="w-50">
                     <CFormLabel>Status:</CFormLabel>
                     <CInputGroup>
                       <CInputGroupText>
@@ -641,27 +609,6 @@ const Users = () => {
                   </div>
                 </div>
               </CInputGroup>
-              <CInputGroup className="mb-3">
-                <div className="d-flex  w-100 gap-3">
-                  <div className="w-100">
-                    <CFormLabel>Address:</CFormLabel>
-                    <CInputGroup>
-                      <CInputGroupText>
-                        <CIcon icon={cilMap} />
-                      </CInputGroupText>
-                      <CFormTextarea
-                        rows={3}
-                        type="text"
-                        id="address"
-                        name="address"
-                        placeholder="Address"
-                        value={formData.address}
-                        onChange={InputChangedata}
-                      ></CFormTextarea>
-                    </CInputGroup>
-                  </div>
-                </div>
-              </CInputGroup>
             </CCardBody>
             <CCardFooter>
               <div className="button-box">
@@ -671,10 +618,10 @@ const Users = () => {
                     putUsers(codigoEditar)
                   }}
                 >
-                  Editar
+                  Edit
                 </CButton>
                 <CButton className="button-register" onClick={() => seteditModalVisible(false)}>
-                  Cerrar
+                  Close
                 </CButton>
               </div>
             </CCardFooter>
@@ -682,7 +629,7 @@ const Users = () => {
         </div>
       </CModal>
 
-      {/*------------------------------------------------------------------------------------- */}
+
       <div className="conteiner mb-4">
         <CCard className="c_list">
           <CCardHeader className="card-header">
@@ -700,9 +647,8 @@ const Users = () => {
                     <CTableHeaderCell>Last name</CTableHeaderCell>
                     <CTableHeaderCell>Username</CTableHeaderCell>
                     <CTableHeaderCell>Email</CTableHeaderCell>
-                    <CTableHeaderCell>Phone</CTableHeaderCell>
-                    <CTableHeaderCell>Department</CTableHeaderCell>
                     <CTableHeaderCell>Status</CTableHeaderCell>
+                    <CTableHeaderCell> </CTableHeaderCell>
                     <CTableHeaderCell>Edit</CTableHeaderCell>
                     <CTableHeaderCell>Delete</CTableHeaderCell>
                   </CTableRow>
@@ -712,23 +658,12 @@ const Users = () => {
                     <CTableRow key={index}>
                       <CTableDataCell>{index + 1}</CTableDataCell>
                       <CTableDataCell>{users.first_name}</CTableDataCell>
-                      <CTableDataCell>{users.las_name}</CTableDataCell>
+                      <CTableDataCell>{users.last_name}</CTableDataCell>
                       <CTableDataCell>{users.user_name}</CTableDataCell>
                       <CTableDataCell>{users.email}</CTableDataCell>
-                      <CTableDataCell>{users.phone}</CTableDataCell>
-                      <CTableDataCell>{users.department}</CTableDataCell>
                       <CTableDataCell>{users.status}</CTableDataCell>
                       <CTableDataCell>
-                        <CButton
-                          className="box-icon"
-                          onClick={() =>
-                            Navigate(
-                              `/management/users${users.id_users}`,
-                            )
-                          }
-                        >
-                          <CIcon icon={cibDropbox} className="text-success" />{' '}
-                        </CButton>
+
                       </CTableDataCell>
                       <CTableDataCell>
                         <CButton
@@ -740,8 +675,6 @@ const Users = () => {
                               last_name: users.last_name,
                               user_name: users.user_name,
                               email: users.email,
-                              phone: users.phone,
-                              department: users.department,
                               status: users.status,
                             })
                             seteditModalVisible(true)
@@ -755,7 +688,7 @@ const Users = () => {
                           className=" box-icon"
                           onClick={() => {
                             setMvisible(true)
-                            SetdeleteDptid(users.id_users)
+                            SetdeleteUser(users.id_users)
                           }}
                         >
                           <CIcon icon={cilXCircle} className="text-danger" />{' '}
