@@ -1,3 +1,4 @@
+import { element } from 'prop-types'
 import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
@@ -8,9 +9,7 @@ const Typography = React.lazy(() => import('./views/theme/typography/Typography'
 const users = React.lazy(() => import('src/views/management/Users/users.js'))
 const reports = React.lazy(() => import('./components/reports'))
 
-
 const Departments = React.lazy(() => import('../src/views/management/Departments/departments.js'))
-
 
 const Inventory = React.lazy(() => import('./components/Inventory.js'))
 
@@ -111,8 +110,7 @@ const routes = [
   { path: '/widgets', name: 'Widgets', element: Widgets },
   //------------------------------------------------------------------------------
 
- 
-  { path: '/management/Users', name: 'Management', element: users , exact: true },
+  { path: '/management/Users', name: 'Management', element: users, exact: true },
 
   { path: '/management/Departments', name: 'Departments', element: Departments, exact: true },
 
@@ -125,6 +123,8 @@ const routes = [
   },
 
   { path: '/components/register_dpt', name: 'register_dpt', element: register_dpt },
+
+  { path: '/components/reports/:assetId', name: 'report', element: reports },
 ]
 
 export default routes

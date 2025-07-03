@@ -39,10 +39,14 @@ import {
   cilCommentSquare,
   cilPen,
   cilCalendar,
+  cilBullhorn,
 } from '@coreui/icons'
 import axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { number } from 'prop-types'
+
+import { PDFDownloadLink } from '@react-pdf/renderer'
+
+import AssetsPDF from '../components/Assets.PDF'
 
 const Inventory = () => {
   const Navigate = useNavigate()
@@ -1678,6 +1682,12 @@ const Inventory = () => {
             <div>Inventory from department:{departmentId}</div>
 
             <div>
+              <PDFDownloadLink
+                document={<AssetsPDF inventory={inventory} />}
+                fileName="assets_report.pdf"
+              >
+                <CButton className="pdfgenerate">Generate pdf</CButton>
+              </PDFDownloadLink>
               <CButton
                 className="buttom-add"
                 onClick={() => {
@@ -1721,6 +1731,7 @@ const Inventory = () => {
                     <CTableHeaderCell>Level</CTableHeaderCell>
                     <CTableHeaderCell>Analyst</CTableHeaderCell>
                     <CTableHeaderCell>Edit</CTableHeaderCell>
+                    <CTableHeaderCell>Report</CTableHeaderCell>
                     <CTableHeaderCell>Delete</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
@@ -1766,6 +1777,16 @@ const Inventory = () => {
                           <CButton
                             className="box-icon"
                             onClick={() => {
+                              Navigate(`/components/reports/${item.id_assets}`)
+                            }}
+                          >
+                            <CIcon icon={cilBullhorn} className="text-warning" />
+                          </CButton>
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          <CButton
+                            className="box-icon"
+                            onClick={() => {
                               setDeleteitemid(item.id_assets)
                               setMvisible(true)
                             }}
@@ -1777,7 +1798,7 @@ const Inventory = () => {
                     ))
                   ) : (
                     <CTableRow>
-                      <CTableDataCell colSpan={24} className="text-center">
+                      <CTableDataCell colSpan={25} className="text-center">
                         {'Assets not foud'}
                       </CTableDataCell>
                     </CTableRow>
