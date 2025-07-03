@@ -52,7 +52,6 @@ const _nav = [
   },
 
   {
-
     component: CNavGroup,
     name: 'Users',
     to: '/buttons',
@@ -69,13 +68,6 @@ const _nav = [
         to: '/management/Users',
       },
     ],
-  },
-
-  {
-    component: CNavItem,
-    name: 'Reports',
-    to: '/components/reports',
-    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
   },
 
   {
