@@ -52,15 +52,13 @@ const Reports_list = () => {
   const [mvisible, setMvisible] = useState(false)
   const [reports, setReports] = useState([])
 
-
-
+  const [campo, setCampo] = useState('')
+  const [valor, setValor] = useState('')
 
   const InputChangedata = (e) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value }) //deja todos los valores de formdata pero dejando el nuevo valor , osea por eso el name , eso variaria , puede ser name , addres etc
   }
-
-
 
   //get report
   useEffect(() => {
@@ -95,6 +93,24 @@ const Reports_list = () => {
     }
   }
 
+  //filter report
+  const filter = async () => {
+    if (!campo || !valor) return
+
+    try{
+      const token = localStorage.getItem('token')
+      const res = await axios.get(`http://localhost:4000/filter`, {
+        params: {campo, valor},
+        headers: {
+          Authorization: `Bearer $(token)`,
+          'Content-Type': 'application/json',
+        },
+      })
+      setReports(res.data)
+    } catch (err) {
+      console.log(err)
+    }
+  }
   
   return (
     <>
@@ -102,8 +118,14 @@ const Reports_list = () => {
       {/*------------------------------------------------------------------------------------- */}
       <div className="buscador">
         <CForm className="d-flex">
-          <CFormInput className="input-buttom-search" type="text" placeholder="Search"></CFormInput>
-          <CButton className="search-buttom">
+          <CFormInput className="input-buttom-search" type="text" placeholder="Search"
+          value={valor}
+          onChange={(e) => setValor(e.target.value)}
+          ></CFormInput>
+          <CButton className="search-buttom"
+          onClick={() =>{
+            filter()
+          }}>
             <CIcon className="icon-search" icon={cilSearch} />
           </CButton>
         </CForm>
@@ -133,6 +155,18 @@ const Reports_list = () => {
       <div className="conteiner mb-4">
         <CCard className="c_list">
           <CCardHeader className="card-header">
+            <div>
+              <CFormSelect value={campo}
+                onChange={(e) => setCampo(e.target.value)}
+                className="me-2"
+                >
+                <option value="">Select Filter</option>
+                <option value="date">Date</option>
+                <option value="hour">Hour</option>
+                <option value="priority">Priority</option>
+                <option value="status">Status</option>
+              </CFormSelect>
+            </div>
             <div>Management Reports</div>
           </CCardHeader>
           <CCardBody>

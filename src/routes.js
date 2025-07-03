@@ -7,6 +7,7 @@ const Typography = React.lazy(() => import('./views/theme/typography/Typography'
 //----------------------------------------------------------------------------
 
 const users = React.lazy(() => import('src/views/management/Users/users.js'))
+const register_user = React.lazy(() => import('./components/register_user'))
 const reports = React.lazy(() => import('./components/reports'))
 
 const reports_list = React.lazy(() => import('./components/reports_list'))
@@ -114,6 +115,7 @@ const routes = [
   //------------------------------------------------------------------------------
 
   { path: '/management/Users', name: 'Management', element: users, exact: true },
+    { path: '/components/register_user', name: 'register_user', element: register_user, exact: true },
 
   { path: '/management/Departments', name: 'Departments', element: Departments, exact: true },
 

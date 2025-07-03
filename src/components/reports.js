@@ -222,7 +222,7 @@ const Reports = () => {
         },
       })
 
-      setrepors(response.data)
+      setReports(response.data)
 
     } catch (err) {
       console.error('Error al registrar asset:', err)
@@ -233,6 +233,7 @@ const Reports = () => {
     <>
       <div className="ccard-box mb-4">
         <CCard>
+        <CCardHeader>Add New Report</CCardHeader>
           <CCardBody>
             <CInputGroup className="mb-3">
               <div className="d-flex  w-100 gap-3">
@@ -307,8 +308,12 @@ const Reports = () => {
             </div>
           </CCardBody>
           <CCardFooter>
-           <CButton> Register </CButton>
-          </CCardFooter>
+                <div className="button-box">
+                    <CButton className="button-register" onClick={() => seteditModalVisible(false)}>
+                        Register
+                    </CButton>
+                </div>
+            </CCardFooter>
         </CCard>
       </div>
     </>
